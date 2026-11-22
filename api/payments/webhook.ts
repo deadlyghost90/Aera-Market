@@ -25,7 +25,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const gateway = getGateway('safepay');
   const signature = pickSignatureHeader(req.headers as Record<string, unknown>);
 
-  if (!gateway.verifyWebhookSignature({ rawBody, signatureHeader: signature })) {
+  let verified = gateway.verifyWebhookSignature({ rawBody, signatureHeader: signature });
+
+  // Hosting platforms may hand us a re-serialised body when they parse it
+  // before the function runs. Try the canonical compact form as a fallback;
+  // the HMAC still has to validate against our secret either way.
+  if (!verified && rawBody.trim().startsWith('{')) {
+    try {
+      const canonical = JSON.stringify(JSON.parse(rawBody));
+      if (canonical !== rawBody) {
+        verified = gateway.verifyWebhookSignature({
+          rawBody: canonical,
+          signatureHeader: signature
+        });
+      }
+    } catch {
+      // Not JSON - nothing more to try.
+    }
+  }
+
+  if (!verified) {
     logger.warn('webhook_signature_invalid');
     await writeAudit({
       actorUid: 'system',
