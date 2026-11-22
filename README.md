@@ -1,70 +1,81 @@
 # Aera Market
 
-Multi-vendor digital products marketplace for **Aera Intelligence (Pvt) Ltd.**
+Author marketplace for digital products, built for **Aera Intelligence (Pvt) Ltd.**
 
-- Frontend: static HTML5 + CSS3 + vanilla JavaScript (no framework, no bundler)
-- Backend: TypeScript serverless functions on Vercel (`api/`)
-- Data: Firebase Authentication + Realtime Database (Admin SDK only)
-- Payments: Safepay (hosted checkout), gateway-abstracted
+Anyone can apply as an author. An administrator approves the profile, the author
+uploads real files, automated checks compare those files with what the author
+claims, and a reviewer decides whether it goes live. Buyers pay through Safepay
+and download from a private bucket.
 
-## Status
+- **Frontend:** static HTML5 + CSS3 + vanilla ES modules (no framework, no bundler)
+- **Backend:** TypeScript serverless functions on Vercel (`api/`)
+- **Data:** Firebase Auth + Realtime Database, accessed only through the Admin SDK
+- **Files:** Backblaze B2, private bucket, presigned uploads and downloads
 
-Working vertical slice: authentication, catalogue, orders, payment initiation,
-gateway return + webhook verification, settlement with 40% commission, seller
-balances, refunds with admin approval, admin analytics, customer payment
-history, and unit tests.
+## What works today
 
-The UI is intentionally unstyled beyond a structural baseline — visual design is
-handled separately.
+| Area | State |
+|---|---|
+| Accounts, sessions, roles | Email/password sign-in with HttpOnly session cookies |
+| Authors | Apply, admin approve/reject/suspend, per-author commission |
+| Catalogue | Categories with allowed types, file types, size and price floors |
+| Submissions | Draft → automated checks → review queue → approved/rejected/changes |
+| Uploads | Presigned PUT to B2 with size **and** content-type signed; verified via HeadObject |
+| Payments | Safepay hosted checkout, verified redirect + webhook, 40% commission by default |
+| Refunds | Buyer request, admin approval, manual gateway completion, ledger reversal |
+| Delivery | Purchase entitlements, 120-second signed downloads, access revoked on full refund |
+| Admin | Products, authors, categories, payments, refunds, review queue |
+| UI | 14 pages sharing one design system and shell |
 
 ## Quick start
 
 ```bash
 pnpm install
 cp .env.example .env.local     # fill in real values
+node scripts/preflight.mjs     # checks every variable before you deploy
 pnpm typecheck
 pnpm test
+pnpm check:pages
 ```
 
-Deploy:
-
-```bash
-vercel link
-vercel env pull .env.local
-vercel deploy --prebuilt=false
-```
-
-## Project layout
-
-```
-*.html              pages (root, as required)
-css/                single structural stylesheet
-js/                 browser ES modules (core/, pages/)
-api/                Vercel functions - one file per route
-lib/server/         server-only modules (firebase, payments, security, database)
-lib/shared/         types + enums shared by API and tests
-firebase/           database rules + indexes
-tests/              node:test unit tests (compiled with tsc)
-scripts/            seed + role bootstrap (development only)
-docs/               architecture and payment documentation
-```
-
-## Documentation
-
-- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — gateway contract, data model, environment, deployment, testing, limitations.
+Deploy: see [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md).
 
 ## Scripts
 
 | Command | Purpose |
 |---|---|
-| `pnpm typecheck` | Type-check the API and shared modules |
-| `pnpm test` | Run unit tests |
-| `pnpm seed` | Create a demo seller + product (dev only) |
+| `pnpm typecheck` | Strict TypeScript over `api/` and `lib/` |
+| `pnpm test` | Six suites, 33 tests (state machine, commission, signatures, refunds, review rules, presigned uploads) |
+| `pnpm check:pages` | Every page asset, element id and nav target resolves |
+| `node scripts/preflight.mjs` | Validate environment variables and formats |
+| `pnpm seed` | Categories + admin + demo author (development only) |
 | `pnpm make-admin <email>` | Grant the ADMIN role |
+
+## Layout
+
+```
+*.html              pages (root, as required)
+css/                one design system
+js/                 browser modules: core/ (shell, api, catalog) and pages/
+api/                Vercel functions, one file per route
+lib/server/         firebase, database, payments, products, storage, security, utils
+lib/shared/         types and enums shared by API and tests
+firebase/           database rules and indexes
+scripts/            seed, preflight, page wiring check
+tests/              unit tests
+docs/               PAYMENTS.md, MARKETPLACE.md, DEPLOY-VERCEL.md
+```
+
+## Documentation
+
+- [`docs/MARKETPLACE.md`](docs/MARKETPLACE.md) — author flow, the fourteen review checks and their limits, upload binding, delivery.
+- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — Safepay integration, ledger, refunds, environment.
+- [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) — step-by-step deployment.
 
 ## Security notes
 
 - Secrets live only in environment variables; nothing sensitive is committed.
-- The browser never sees a service account, gateway key, or database credential.
-- Every financial endpoint re-validates the session, the role and resource ownership.
-- Payment status changes only after gateway verification (redirect + webhook).
+- The browser never sees a service account, gateway key or bucket credential.
+- Every financial endpoint re-validates session, role and resource ownership.
+- A payment becomes `PAID` only after gateway verification; a download is issued
+  only after a purchase row proves ownership.
