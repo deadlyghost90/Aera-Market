@@ -14,14 +14,23 @@ import { statusForDecision } from '../../lib/server/products/review';
 import { writeAudit } from '../../lib/server/security/audit';
 import { parse, idSchema } from '../../lib/server/security/validate';
 import { AppError } from '../../lib/server/utils/errors';
-import { PRODUCT_STATUS, REJECTION_REASONS, REVIEW_DECISION } from '../../lib/shared/enums';
+import type { ProductStatus, ReviewDecision } from '../../lib/shared/enums';
+import { PRODUCT_STATUS, REJECTION_REASONS } from '../../lib/shared/enums';
 
 const decisionSchema = z.object({
   productId: idSchema,
-  decision: z.enum(REVIEW_DECISION),
+  decision: z.enum(['APPROVE', 'REJECT', 'REQUEST_CHANGES', 'SUSPEND']),
   note: z.string().trim().max(1000).optional(),
   reason: z.enum(REJECTION_REASONS).optional()
 });
+
+/** Which product states each admin action may start from. */
+const FROM_STATES: Record<string, ProductStatus[]> = {
+  APPROVE: ['PENDING_REVIEW', 'SUSPENDED'],
+  REJECT: ['PENDING_REVIEW'],
+  REQUEST_CHANGES: ['PENDING_REVIEW'],
+  SUSPEND: ['APPROVED']
+};
 
 export default route(async (req: VercelRequest, res: VercelResponse) => {
   const auth = await requireAdmin(req);
@@ -30,7 +39,7 @@ export default route(async (req: VercelRequest, res: VercelResponse) => {
     const queueOnly = req.query.queue === '1';
     const statusRaw = typeof req.query.status === 'string' ? req.query.status : 'PENDING_REVIEW';
     const status = (PRODUCT_STATUS as readonly string[]).includes(statusRaw)
-      ? (statusRaw as (typeof PRODUCT_STATUS)[number])
+      ? (statusRaw as ProductStatus)
       : 'PENDING_REVIEW';
 
     const products = queueOnly ? await listReviewQueue(100) : await listProductsByStatus(status, 100);
@@ -47,39 +56,50 @@ export default route(async (req: VercelRequest, res: VercelResponse) => {
   const body = parse(decisionSchema, req.body);
 
   const product = await requireProduct(body.productId);
-  if (product.status !== 'PENDING_REVIEW') {
-    throw new AppError('CONFLICT', `Only products in review can be decided, this one is ${product.status}`);
+  const allowedFrom = FROM_STATES[body.decision] ?? [];
+
+  if (!allowedFrom.includes(product.status)) {
+    throw new AppError(
+      'CONFLICT',
+      `Cannot ${body.decision.toLowerCase()} a product that is ${product.status}`
+    );
   }
 
-  if (body.decision !== 'APPROVE' && (!body.note || body.note.length < 20)) {
+  const needsReason = body.decision !== 'APPROVE';
+  if (needsReason && (!body.note || body.note.length < 20)) {
     throw new AppError('BAD_REQUEST', 'Explain the decision in at least 20 characters');
   }
 
-  const target = statusForDecision(body.decision);
+  const target: ProductStatus =
+    body.decision === 'SUSPEND'
+      ? 'SUSPENDED'
+      : statusForDecision(body.decision as ReviewDecision);
+
+  const baseReview = product.review ?? {
+    submittedAt: Date.now(),
+    automatedPassed: false,
+    checks: [],
+    reviewerId: null,
+    decidedAt: null,
+    decision: null,
+    note: null,
+    reason: null
+  };
 
   const updated = await setProductStatus(product.id, target, {
     rejectionNote: body.decision === 'APPROVE' ? null : body.note ?? null,
     approvedAt: body.decision === 'APPROVE' ? Date.now() : null,
     review: {
-      ...(product.review ?? {
-        submittedAt: Date.now(),
-        automatedPassed: false,
-        checks: [],
-        decision: null,
-        note: null,
-        reason: null,
-        decidedAt: null,
-        reviewerId: null
-      }),
+      ...baseReview,
       reviewerId: auth.uid,
       decidedAt: Date.now(),
-      decision: body.decision,
+      decision: body.decision === 'SUSPEND' ? baseReview.decision : (body.decision as ReviewDecision),
       note: body.note ?? null,
       reason: body.reason ?? null
     }
   });
 
-  if (body.decision === 'APPROVE') {
+  if (body.decision === 'APPROVE' && product.status !== 'SUSPENDED') {
     await bumpSellerStats(product.sellerId, { products: 1 });
   }
 
@@ -90,8 +110,9 @@ export default route(async (req: VercelRequest, res: VercelResponse) => {
     targetId: product.id,
     meta: {
       sellerId: product.sellerId,
-      reason: body.reason ?? null,
-      automatedPassed: product.review?.automatedPassed ?? null
+      from: product.status,
+      to: target,
+      reason: body.reason ?? null
     }
   });
 
