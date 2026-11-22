@@ -1,0 +1,11 @@
+node_modules
+.pnpm-store
+.tests-build
+.vercel
+.git
+*.log
+docs
+tests
+scripts
+README.md
+coverage

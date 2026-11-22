@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My payments — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/index.html" class="brand">Aera Market</a>
+    <nav><a href="/index.html">Explore</a></nav>
+  </header>
+
+  <main class="container">
+    <h1>My payments</h1>
+    <p id="summary" class="muted"></p>
+    <p id="status" class="muted">Loading…</p>
+    <table class="data-table" id="payments-table" hidden>
+      <thead>
+        <tr>
+          <th>Date</th><th>Product</th><th>Amount</th><th>Status</th><th>Refunded</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="payments-body"></tbody>
+    </table>
+  </main>
+
+  <script type="module" src="/js/pages/buyer-payments.js"></script>
+</body>
+</html>

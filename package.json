@@ -1,0 +1,24 @@
+{
+  "name": "aera-market",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Aera Market - multi-vendor digital products marketplace",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsc -p tsconfig.tests.json && node --test .tests-build/tests/state.test.js .tests-build/tests/commission.test.js .tests-build/tests/signature.test.js .tests-build/tests/refund.test.js",
+    "seed": "node scripts/seed.mjs",
+    "make-admin": "node scripts/make-admin.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@vercel/node": "^5.1.0",
+    "typescript": "^5.7.2"
+  }
+}

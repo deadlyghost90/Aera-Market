@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/index.html" class="brand">Aera Market</a>
+  </header>
+
+  <main class="container narrow">
+    <h1>Create account</h1>
+    <form id="register-form" class="form">
+      <label>Display name <input type="text" name="displayName" autocomplete="name" required minlength="2" maxlength="60"></label>
+      <label>Email <input type="email" name="email" autocomplete="email" required></label>
+      <label>Password <input type="password" name="password" autocomplete="new-password" required minlength="10"></label>
+      <p class="muted">At least 10 characters, with upper case, lower case and a number.</p>
+      <button type="submit">Create account</button>
+      <p id="form-message" class="muted" role="status"></p>
+    </form>
+    <p>Already registered? <a href="/login.html">Sign in</a></p>
+  </main>
+
+  <script type="module" src="/js/pages/auth.js"></script>
+</body>
+</html>

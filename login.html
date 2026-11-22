@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/index.html" class="brand">Aera Market</a>
+  </header>
+
+  <main class="container narrow">
+    <h1>Sign in</h1>
+    <form id="login-form" class="form">
+      <label>Email <input type="email" name="email" autocomplete="email" required></label>
+      <label>Password <input type="password" name="password" autocomplete="current-password" required></label>
+      <button type="submit">Sign in</button>
+      <p id="form-message" class="muted" role="status"></p>
+    </form>
+    <p>New here? <a href="/register.html">Create an account</a></p>
+  </main>
+
+  <script type="module" src="/js/pages/auth.js"></script>
+</body>
+</html>

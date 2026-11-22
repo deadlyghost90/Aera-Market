@@ -1,0 +1,30 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "products": {
+      ".indexOn": ["status", "sellerId", "createdAt"]
+    },
+    "orders": {
+      ".indexOn": ["buyerId", "createdAt"]
+    },
+    "payments": {
+      ".indexOn": ["createdAt", "userId", "orderId", "status"]
+    },
+    "refunds": {
+      ".indexOn": ["paymentId", "createdAt"]
+    },
+    "ledger": {
+      ".indexOn": ["paymentId"]
+    },
+    "sellerBalances": {
+      ".indexOn": ["updatedAt"]
+    },
+    "auditLogs": {
+      ".indexOn": ["createdAt"]
+    },
+    "users": {
+      ".indexOn": ["role", "email"]
+    }
+  }
+}

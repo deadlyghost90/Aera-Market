@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment result — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/index.html" class="brand">Aera Market</a>
+  </header>
+
+  <main class="container">
+    <h1>Payment status</h1>
+    <p id="status" aria-live="polite">Checking your payment…</p>
+    <dl id="details" class="summary-list" hidden>
+      <dt>Payment</dt><dd id="payment-id"></dd>
+      <dt>Order</dt><dd id="order-id"></dd>
+      <dt>Amount</dt><dd id="amount"></dd>
+      <dt>Status</dt><dd id="payment-status"></dd>
+    </dl>
+    <p><a href="/buyer-payments.html">View all payments</a></p>
+  </main>
+
+  <script type="module" src="/js/pages/order-result.js"></script>
+</body>
+</html>
