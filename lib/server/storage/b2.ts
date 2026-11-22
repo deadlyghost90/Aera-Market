@@ -88,7 +88,12 @@ export async function presignUpload(input: {
     ContentLength: input.sizeBytes
   });
 
-  return getSignedUrl(client, command, { expiresIn: input.expiresInSeconds ?? 600 });
+  // Sign both headers explicitly: otherwise the presigner omits content-type and
+  // a client could upload a different file type than the one that was approved.
+  return getSignedUrl(client, command, {
+    expiresIn: input.expiresInSeconds ?? 600,
+    signableHeaders: new Set(['content-type', 'content-length'])
+  });
 }
 
 export async function presignDownload(input: {

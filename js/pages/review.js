@@ -49,6 +49,24 @@ function renderCard(product) {
   summary.className = 'muted small mt-2';
   summary.textContent = product.summary;
 
+  if (product.previewUrl) {
+    const visual = document.createElement('div');
+    visual.className = 'product-thumb';
+    visual.style.maxWidth = '320px';
+    visual.style.borderRadius = '12px';
+    visual.style.marginTop = '0.75rem';
+    visual.style.border = '1px solid var(--line)';
+
+    const img = document.createElement('img');
+    img.src = `/api/previews/${encodeURIComponent(product.id)}`;
+    img.alt = product.title;
+    img.addEventListener('error', () => visual.remove());
+    visual.append(img);
+    card.append(head, visual, summary);
+  } else {
+    card.append(head, summary);
+  }
+
   const checks = document.createElement('ul');
   checks.className = 'check-list mt-2';
   for (const check of product.review?.checks ?? []) {
@@ -118,7 +136,7 @@ function renderCard(product) {
 
   actions.append(approve, changes, reject);
 
-  card.append(head, summary, checks, files, note, reason, actions);
+  card.append(checks, files, note, reason, actions);
   return card;
 }
 
