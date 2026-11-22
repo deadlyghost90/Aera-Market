@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Earnings — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="section">
+    <div class="container">
+      <div class="spread">
+        <div>
+          <span class="hero-eyebrow">Author account</span>
+          <h1 style="font-size: clamp(36px, 5vw, 68px); margin-top: 12px">Earnings</h1>
+          <p class="lead mt-2">Every sale, the commission taken, and what is left for you.</p>
+        </div>
+        <a class="btn" href="/seller-dashboard.html">Back to hub</a>
+      </div>
+
+      <p class="muted small mt-3" id="status">Loading…</p>
+      <section id="stats" class="stat-grid mt-3" hidden></section>
+
+      <div class="card mt-3" id="entries-card" hidden>
+        <div class="spread">
+          <h3>Ledger</h3>
+          <span class="badge" id="commission-badge"></span>
+        </div>
+        <table class="data-table mt-2">
+          <thead>
+            <tr><th>Date</th><th>Type</th><th>Amount</th><th>Order</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <p class="empty mt-2" id="empty" hidden>No sales yet. Approved products appear here after they sell.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script type="module" src="/js/pages/seller-earnings.js"></script>
+</body>
+</html>

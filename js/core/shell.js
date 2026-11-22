@@ -1,4 +1,4 @@
-import { currentSession, api } from './api.js';
+﻿import { currentSession, api } from './api.js';
 
 /** Formats integer minor units as PKR. */
 export function money(amountMinor, currency = 'PKR') {
@@ -102,6 +102,7 @@ export async function mountShell(active = '') {
 
     if (session) {
       nav.append(navLink('/seller-dashboard.html', session.role === 'ADMIN' ? 'Author hub' : 'Sell', active));
+      nav.append(navLink('/seller-earnings.html', 'Earnings', active));
       if (session.role === 'ADMIN') {
         nav.append(navLink('/admin-review.html', 'Review queue', active));
         nav.append(navLink('/admin-authors.html', 'Authors', active));
@@ -138,7 +139,7 @@ export async function mountShell(active = '') {
     wrap.className = 'container';
 
     const left = document.createElement('span');
-    left.textContent = '© Aera Intelligence (Pvt) Ltd.';
+    left.textContent = 'Â© Aera Intelligence (Pvt) Ltd.';
 
     const right = document.createElement('span');
     right.textContent = 'Every product is reviewed before it goes live.';
