@@ -1,4 +1,4 @@
-# Aera Market
+﻿# Aera Market
 
 Author marketplace for digital products, built for **Aera Intelligence (Pvt) Ltd.**
 
@@ -19,7 +19,7 @@ and download from a private bucket.
 | Accounts, sessions, roles | Email/password sign-in with HttpOnly session cookies |
 | Authors | Apply, admin approve/reject/suspend, per-author commission |
 | Catalogue | Categories with allowed types, file types, size and price floors |
-| Submissions | Draft → automated checks → review queue → approved/rejected/changes |
+| Submissions | Draft â†’ automated checks â†’ review queue â†’ approved/rejected/changes |
 | Uploads | Presigned PUT to B2 with size **and** content-type signed; verified via HeadObject |
 | Payments | Safepay hosted checkout, verified redirect + webhook, 40% commission by default |
 | Refunds | Buyer request, admin approval, manual gateway completion, ledger reversal |
@@ -57,7 +57,8 @@ Deploy: see [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md).
 *.html              pages (root, as required)
 css/                one design system
 js/                 browser modules: core/ (shell, api, catalog) and pages/
-api/                Vercel functions, one file per route
+api/                single catch-all function (Hobby plan allows 12)
+lib/api/            route handlers, dispatched by the router
 lib/server/         firebase, database, payments, products, storage, security, utils
 lib/shared/         types and enums shared by API and tests
 firebase/           database rules and indexes
@@ -68,9 +69,9 @@ docs/               PAYMENTS.md, MARKETPLACE.md, DEPLOY-VERCEL.md
 
 ## Documentation
 
-- [`docs/MARKETPLACE.md`](docs/MARKETPLACE.md) — author flow, the fourteen review checks and their limits, upload binding, delivery.
-- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — Safepay integration, ledger, refunds, environment.
-- [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) — step-by-step deployment.
+- [`docs/MARKETPLACE.md`](docs/MARKETPLACE.md) â€” author flow, the fourteen review checks and their limits, upload binding, delivery.
+- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) â€” Safepay integration, ledger, refunds, environment.
+- [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md) â€” step-by-step deployment.
 
 ## Security notes
 
