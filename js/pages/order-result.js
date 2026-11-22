@@ -1,5 +1,8 @@
 import { api } from '../core/api.js';
+import { mountShell } from '../core/shell.js';
 import { formatMoney, formatDate, labelStatus } from '../core/format.js';
+
+await mountShell();
 
 const statusText = document.getElementById('status');
 const details = document.getElementById('details');

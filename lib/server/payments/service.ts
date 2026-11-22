@@ -32,6 +32,20 @@ export interface InitiateResult {
 }
 
 /**
+ * Commission is taken from the author's own rate when the order belongs to a
+ * single seller, otherwise the platform default applies to the whole order.
+ */
+async function resolveCommissionPercent(order: Order): Promise<number> {
+  const sellerIds = [...new Set(order.items.map((item) => item.sellerId))];
+  if (sellerIds.length !== 1) return env().PLATFORM_COMMISSION_PERCENT;
+
+  const { getSeller } = await import('../database/sellers.repo');
+  const seller = await getSeller(sellerIds[0] as string);
+  if (!seller || seller.status !== 'APPROVED') return env().PLATFORM_COMMISSION_PERCENT;
+  return seller.commissionPercent;
+}
+
+/**
  * Creates (or resumes) the payment for an order and returns the hosted
  * checkout URL. The client can retry freely: the idempotency key guarantees a
  * single gateway charge per order.
@@ -64,7 +78,7 @@ export async function initiatePayment(input: {
     throw new AppError('CONFLICT', 'This order has already been paid');
   }
 
-  const commissionPercent = config.PLATFORM_COMMISSION_PERCENT;
+  const commissionPercent = await resolveCommissionPercent(order);
   const { commissionMinor, sellerPayableMinor } = splitCommission(order.totalMinor, commissionPercent);
   const firstItem = order.items[0] as OrderItem;
   const productName =

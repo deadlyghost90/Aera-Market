@@ -1,4 +1,7 @@
 import { api } from '../core/api.js';
+import { mountShell } from '../core/shell.js';
+
+await mountShell();
 
 const message = document.getElementById('form-message');
 const next = new URLSearchParams(window.location.search).get('next');

@@ -1,5 +1,8 @@
 import { api, currentSession, redirectToLogin } from '../core/api.js';
+import { mountShell } from '../core/shell.js';
 import { formatMoney, formatDate, labelStatus, toMinor } from '../core/format.js';
+
+await mountShell('/buyer-payments.html');
 
 const summary = document.getElementById('summary');
 const statusText = document.getElementById('status');

@@ -173,31 +173,56 @@ async function openWizard(existing) {
   state.draft = existing ? { id: existing.id } : null;
   el('wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+  if (existing?.id) {
+    const full = await api(`/api/products/${encodeURIComponent(existing.id)}`).catch(() => null);
+    if (full) {
+      const set = (name, value) => {
+        const field = form.elements.namedItem(name);
+        if (field) field.value = value ?? '';
+      };
+      set('title', full.title);
+      set('summary', full.summary);
+      set('description', full.description);
+      set('categoryId', full.categoryId);
+      set('kind', full.kind);
+      set('license', full.license);
+      set('price', (full.priceMinor / 100).toFixed(2));
+      set('tags', (full.tags ?? []).join(', '));
+      el('upload-step').hidden = false;
+      el('wizard-step').textContent = 'Step 2 of 3';
+      bindUploads();
+    }
+  }
+
   form.onsubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(form);
     const price = Math.round(Number(data.get('price')) * 100);
 
+    const payload = {
+      title: data.get('title'),
+      summary: data.get('summary'),
+      description: data.get('description'),
+      categoryId: data.get('categoryId'),
+      kind: data.get('kind'),
+      license: data.get('license'),
+      priceMinor: price,
+      tags: String(data.get('tags') || '')
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+    };
+
+    const editing = Boolean(state.draft?.id);
+
     try {
-      const product = await api('/api/products', {
-        method: 'POST',
-        body: {
-          title: data.get('title'),
-          summary: data.get('summary'),
-          description: data.get('description'),
-          categoryId: data.get('categoryId'),
-          kind: data.get('kind'),
-          license: data.get('license'),
-          priceMinor: price,
-          tags: String(data.get('tags') || '')
-            .split(',')
-            .map((tag) => tag.trim())
-            .filter(Boolean)
-        }
-      });
+      const product = await api(
+        editing ? `/api/products/${encodeURIComponent(state.draft.id)}` : '/api/products',
+        { method: editing ? 'PATCH' : 'POST', body: payload }
+      );
 
       state.draft = product;
-      toast('Draft saved — now attach the files');
+      toast(editing ? 'Draft updated' : 'Draft saved — now attach the files');
       el('upload-step').hidden = false;
       el('wizard-step').textContent = 'Step 2 of 3';
       bindUploads();

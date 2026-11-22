@@ -1,5 +1,8 @@
 import { api, currentSession, redirectToLogin } from '../core/api.js';
+import { mountShell } from '../core/shell.js';
 import { formatMoney } from '../core/format.js';
+
+await mountShell();
 
 const status = document.getElementById('status');
 const actions = document.getElementById('actions');

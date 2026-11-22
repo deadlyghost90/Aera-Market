@@ -3,26 +3,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Payment result — Aera Market</title>
+  <title>Payment status — Aera Market</title>
   <link rel="stylesheet" href="/css/base.css">
 </head>
 <body>
-  <header class="site-header">
-    <a href="/index.html" class="brand">Aera Market</a>
-  </header>
+  <header id="site-header"></header>
 
-  <main class="container">
-    <h1>Payment status</h1>
-    <p id="status" aria-live="polite">Checking your payment…</p>
-    <dl id="details" class="summary-list" hidden>
-      <dt>Payment</dt><dd id="payment-id"></dd>
-      <dt>Order</dt><dd id="order-id"></dd>
-      <dt>Amount</dt><dd id="amount"></dd>
-      <dt>Status</dt><dd id="payment-status"></dd>
-    </dl>
-    <p><a href="/buyer-payments.html">View all payments</a></p>
+  <main class="section">
+    <div class="container narrow">
+      <div class="card card-elevated">
+        <span class="hero-eyebrow">Payment</span>
+        <h1 class="mt-2" style="font-size: 1.8rem">Checking your payment…</h1>
+        <p id="status" class="muted mt-2" aria-live="polite">Talking to the gateway.</p>
+
+        <dl id="details" class="summary-list mt-3" hidden>
+          <dt>Payment</dt><dd id="payment-id" class="mono"></dd>
+          <dt>Order</dt><dd id="order-id" class="mono"></dd>
+          <dt>Amount</dt><dd id="amount"></dd>
+          <dt>Status</dt><dd id="payment-status"></dd>
+        </dl>
+
+        <div class="divider"></div>
+        <div class="row">
+          <a class="btn btn-primary" href="/buyer-payments.html">View purchases</a>
+          <a class="btn btn-ghost" href="/explore.html">Keep browsing</a>
+        </div>
+      </div>
+    </div>
   </main>
 
+  <footer id="site-footer"></footer>
   <script type="module" src="/js/pages/order-result.js"></script>
 </body>
 </html>

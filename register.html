@@ -7,23 +7,37 @@
   <link rel="stylesheet" href="/css/base.css">
 </head>
 <body>
-  <header class="site-header">
-    <a href="/index.html" class="brand">Aera Market</a>
-  </header>
+  <header id="site-header"></header>
 
-  <main class="container narrow">
-    <h1>Create account</h1>
-    <form id="register-form" class="form">
-      <label>Display name <input type="text" name="displayName" autocomplete="name" required minlength="2" maxlength="60"></label>
-      <label>Email <input type="email" name="email" autocomplete="email" required></label>
-      <label>Password <input type="password" name="password" autocomplete="new-password" required minlength="10"></label>
-      <p class="muted">At least 10 characters, with upper case, lower case and a number.</p>
-      <button type="submit">Create account</button>
-      <p id="form-message" class="muted" role="status"></p>
-    </form>
-    <p>Already registered? <a href="/login.html">Sign in</a></p>
+  <main class="section">
+    <div class="container narrow">
+      <div class="card card-elevated">
+        <span class="hero-eyebrow">Join the market</span>
+        <h1 class="mt-2" style="font-size: 1.9rem">Create account</h1>
+        <p class="muted small mt-1">Buy products, or apply as an author and start selling.</p>
+
+        <form id="register-form" class="form mt-3">
+          <label class="field"><span>Display name</span>
+            <input type="text" name="displayName" autocomplete="name" required minlength="2" maxlength="60" placeholder="Your name">
+          </label>
+          <label class="field"><span>Email</span>
+            <input type="email" name="email" autocomplete="email" required placeholder="you@example.com">
+          </label>
+          <label class="field"><span>Password</span>
+            <input type="password" name="password" autocomplete="new-password" required minlength="10" placeholder="At least 10 characters">
+            <small>Upper case, lower case and a number.</small>
+          </label>
+          <button class="btn btn-primary btn-block" type="submit">Create account</button>
+          <p id="form-message" class="small muted" role="status"></p>
+        </form>
+
+        <div class="divider"></div>
+        <p class="small muted">Already registered? <a href="/login.html"><strong>Sign in</strong></a></p>
+      </div>
+    </div>
   </main>
 
+  <footer id="site-footer"></footer>
   <script type="module" src="/js/pages/auth.js"></script>
 </body>
 </html>

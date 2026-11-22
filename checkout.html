@@ -7,28 +7,35 @@
   <link rel="stylesheet" href="/css/base.css">
 </head>
 <body>
-  <header class="site-header">
-    <a href="/index.html" class="brand">Aera Market</a>
-  </header>
+  <header id="site-header"></header>
 
-  <main class="container">
-    <h1>Checkout</h1>
+  <main class="section">
+    <div class="container narrow">
+      <h1 style="font-size: 1.9rem">Checkout</h1>
+      <p class="muted small mt-1">Confirm the item, then continue to the secure gateway.</p>
 
-    <section id="summary" aria-live="polite">
-      <p id="status" class="muted">Loading…</p>
-    </section>
+      <div class="card mt-3">
+        <p id="status" class="muted">Loading…</p>
 
-    <section id="actions" hidden>
-      <dl class="summary-list">
-        <dt>Product</dt><dd id="product-name"></dd>
-        <dt>Price</dt><dd id="product-price"></dd>
-        <dt>Platform fee</dt><dd id="commission-label"></dd>
-      </dl>
-      <button id="pay-button" type="button">Pay with Safepay</button>
-      <p id="pay-note" class="muted">You will be redirected to the gateway's secure checkout.</p>
-    </section>
+        <div id="actions" hidden>
+          <dl class="summary-list mt-2">
+            <dt>Product</dt><dd id="product-name"></dd>
+            <dt>Price</dt><dd id="product-price"></dd>
+            <dt>Platform fee</dt><dd id="commission-label"></dd>
+          </dl>
+          <div class="divider"></div>
+          <button id="pay-button" class="btn btn-primary btn-block" type="button">Pay with Safepay</button>
+          <p id="pay-note" class="small muted mt-2">
+            You will be redirected to the gateway's secure checkout. Aera never sees your card details.
+          </p>
+        </div>
+      </div>
+
+      <p class="small muted mt-3"><a href="/explore.html">← Keep browsing</a></p>
+    </div>
   </main>
 
+  <footer id="site-footer"></footer>
   <script type="module" src="/js/pages/checkout.js"></script>
 </body>
 </html>

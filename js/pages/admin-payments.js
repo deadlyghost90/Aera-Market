@@ -1,5 +1,8 @@
 import { api, currentSession, redirectToLogin } from '../core/api.js';
+import { mountShell } from '../core/shell.js';
 import { formatMoney, formatDate, labelStatus } from '../core/format.js';
+
+await mountShell('/admin-payments.html');
 
 const statusText = document.getElementById('status');
 const statsBox = document.getElementById('stats');

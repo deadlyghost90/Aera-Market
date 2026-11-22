@@ -296,6 +296,10 @@ p { margin: 0; }
 
 /* --------------------------------- forms --------------------------------- */
 
+.summary-list { display: grid; grid-template-columns: max-content 1fr; gap: 0.55rem 1.25rem; margin: 0; }
+.summary-list dt { color: var(--muted); font-size: 0.85rem; }
+.summary-list dd { margin: 0; font-size: 0.92rem; }
+
 .form { display: grid; gap: 1rem; }
 .field { display: grid; gap: 0.4rem; }
 .field > span { font-size: 0.82rem; color: var(--muted); }
@@ -399,8 +403,7 @@ label.check { display: flex; gap: 0.5rem; align-items: center; color: var(--mute
 }
 @keyframes shimmer { to { transform: translateX(100%); } }
 
-.divider { height: 1px; background: var(--line); margin-block: 1.5rem; }
-.mt-1 { margin-top: 0.5rem; } .mt-2 { margin-top: 1rem; } .mt-3 { margin-top: 1.5rem; } .mt-4 { margin-top: 2rem; }
+.divider { height: 1px; background: var(--line); margin-block: 1.5rem; }.mt-1 { margin-top: 0.5rem; } .mt-2 { margin-top: 1rem; } .mt-3 { margin-top: 1.5rem; } .mt-4 { margin-top: 2rem; }
 .text-ok { color: var(--ok); } .text-warn { color: var(--warn); } .text-bad { color: var(--bad); }
 
 @media (max-width: 720px) {
