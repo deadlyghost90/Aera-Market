@@ -5,6 +5,44 @@ import { env } from '../config/env';
 
 let app: App | null = null;
 
+/**
+ * Minimal structural view of the Realtime Database handle this project uses.
+ *
+ * firebase-admin's own `Database` interface extends `FirebaseDatabase` from
+ * `@firebase/database-types`; that package ships no `main`/`types` field, and
+ * under Vercel's per-function TypeScript pass the base type collapses to an
+ * empty interface - silently deleting `.ref()` from the SDK's type. Declaring
+ * the surface locally keeps the same runtime behaviour and keeps type checking
+ * identical on every toolchain.
+ */
+export interface DbSnapshot {
+  val(): unknown;
+}
+
+export interface DbTransactionResult {
+  committed: boolean;
+  snapshot: DbSnapshot;
+}
+
+export interface DbQuery {
+  get(): Promise<DbSnapshot>;
+  orderByChild(path: string): DbQuery;
+  equalTo(value: unknown): DbQuery;
+  limitToFirst(limit: number): DbQuery;
+  limitToLast(limit: number): DbQuery;
+}
+
+export interface DbRef extends DbQuery {
+  set(value: unknown): Promise<void>;
+  update(value: Record<string, unknown>): Promise<void>;
+  remove(): Promise<void>;
+  transaction(handler: (current: unknown) => unknown): Promise<DbTransactionResult>;
+}
+
+export interface DbRoot {
+  ref(path?: string): DbRef;
+}
+
 function buildCredential() {
   const config = env();
 
@@ -46,11 +84,8 @@ export function firebaseApp(): App {
   return app;
 }
 
-// Return types are intentionally inferred from the SDK factories: importing
-// `Database` / `Auth` by name resolves differently under Vercel's per-function
-// TypeScript pass and can collapse to an empty type.
-export function db() {
-  return getDatabase(firebaseApp());
+export function db(): DbRoot {
+  return getDatabase(firebaseApp()) as unknown as DbRoot;
 }
 
 export function auth() {
