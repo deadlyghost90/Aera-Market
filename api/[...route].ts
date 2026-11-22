@@ -107,11 +107,27 @@ function match(pattern: string[], segments: string[]): Record<string, string> | 
   return params;
 }
 
+function segmentsFrom(req: VercelRequest): string[] {
+  const fromQuery = req.query.route ?? (req.query as Record<string, unknown>)['...route'];
+
+  if (Array.isArray(fromQuery)) {
+    return fromQuery.filter((part): part is string => typeof part === 'string' && part.length > 0);
+  }
+  if (typeof fromQuery === 'string' && fromQuery.length > 0) {
+    return fromQuery.split('/').filter(Boolean);
+  }
+
+  // Vercel does not always populate the catch-all param; the request URL is
+  // authoritative and always looks like /api/<route>.
+  const path = (req.url ?? '').split('?')[0] ?? '';
+  const parts = path.split('/').filter(Boolean);
+  if (parts[0] === 'api') parts.shift();
+  if (parts[0]?.startsWith('[')) parts.shift();
+  return parts;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
-  const rawRoute = req.query.route;
-  const segments = (Array.isArray(rawRoute) ? rawRoute : rawRoute ? [rawRoute] : []).filter(
-    (part): part is string => typeof part === 'string' && part.length > 0
-  );
+  const segments = segmentsFrom(req);
 
   const key = segments.join('/');
 
