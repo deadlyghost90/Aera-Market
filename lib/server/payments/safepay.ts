@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { env, webhookSecret } from '../config/env';
+import { env, gateway, webhookSecret } from '../config/env';
 import { AppError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { toMajorUnits, toMinorUnits } from '../utils/money';
@@ -81,20 +81,20 @@ class SafepayGateway implements PaymentGateway {
   readonly id = 'safepay' as const;
 
   get environment(): 'sandbox' | 'production' {
-    return env().FASTPAY_ENVIRONMENT;
+    return gateway().environment;
   }
 
   private baseUrl(): string {
-    return env().FASTPAY_BASE_URL.replace(/\/+$/, '');
+    return gateway().baseUrl;
   }
 
   async initiatePayment(input: InitiatePaymentInput): Promise<InitiatePaymentResult> {
-    const config = env();
+    const gw = gateway();
     const body = {
-      environment: config.FASTPAY_ENVIRONMENT,
+      environment: gw.environment,
       amount: toMajorUnits(input.amountMinor),
       currency: input.currency,
-      client: config.FASTPAY_PUBLIC_KEY
+      client: gw.publicKey
     };
 
     const response = await fetch(`${this.baseUrl()}/order/v1/init`, {
@@ -138,8 +138,9 @@ class SafepayGateway implements PaymentGateway {
 
   buildCheckoutUrl(tracker: string, input: InitiatePaymentInput): string {
     const config = env();
-    const url = new URL(config.FASTPAY_CHECKOUT_URL);
-    url.searchParams.set('env', config.FASTPAY_ENVIRONMENT);
+    const gw = gateway();
+    const url = new URL(gw.checkoutUrl);
+    url.searchParams.set('env', gw.environment);
     url.searchParams.set('beacon', tracker);
     url.searchParams.set('source', 'aera-market');
     url.searchParams.set('order_id', input.orderId);
@@ -199,7 +200,7 @@ class SafepayGateway implements PaymentGateway {
 
   verifyRedirectSignature(tracker: string, signature: string): boolean {
     if (!tracker || !signature) return false;
-    const expected = signTracker(tracker, env().FASTPAY_SECRET_KEY);
+    const expected = signTracker(tracker, gateway().secretKey);
     return safeEqualHex(expected, signature);
   }
 

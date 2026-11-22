@@ -1,16 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { route, sendJson } from '../server/utils/http';
 import { db } from '../server/firebase/admin';
+import { gateway } from '../server/config/env';
 
 const REQUIRED = [
   'FIREBASE_PROJECT_ID',
   'FIREBASE_DATABASE_URL',
   'FIREBASE_API_KEY',
-  'FASTPAY_PUBLIC_KEY',
-  'FASTPAY_SECRET_KEY',
-  'FASTPAY_ENVIRONMENT',
-  'FASTPAY_BASE_URL',
-  'FASTPAY_CHECKOUT_URL',
   'APP_ORIGIN'
 ] as const;
 
@@ -39,6 +35,26 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
     missing.push('FIREBASE_SERVICE_ACCOUNT_B64 (or FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY)');
   }
 
+  const storageMissing = [
+    'B2_ENDPOINT',
+    'B2_REGION',
+    'B2_BUCKET_NAME',
+    'B2_KEY_ID',
+    'B2_APPLICATION_KEY'
+  ].filter((key) => !process.env[key]);
+
+  let gatewayOk = true;
+  let gatewayError: string | null = null;
+  let gatewayEnvironment = 'unset';
+
+  try {
+    const settings = gateway();
+    gatewayEnvironment = settings.environment;
+  } catch (error) {
+    gatewayOk = false;
+    gatewayError = error instanceof Error ? error.message : 'gateway not configured';
+  }
+
   const database: { ok: boolean; latencyMs: number; error: string | null } = {
     ok: false,
     latencyMs: -1,
@@ -56,11 +72,7 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
     }
   }
 
-  const storageMissing = ['B2_ENDPOINT', 'B2_REGION', 'B2_BUCKET_NAME', 'B2_KEY_ID', 'B2_APPLICATION_KEY'].filter(
-    (key) => !process.env[key]
-  );
-
-  const healthy = missing.length === 0 && database.ok;
+  const healthy = missing.length === 0 && database.ok && gatewayOk;
 
   sendJson(res, healthy ? 200 : 503, {
     status: healthy ? 'ok' : 'degraded',
@@ -70,8 +82,14 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
     config: {
       missing,
       serviceAccount: hasServiceAccount,
-      paymentsEnabled: process.env.PAYMENTS_ENABLED ?? 'true',
-      gatewayEnvironment: process.env.FASTPAY_ENVIRONMENT ?? 'unset',
+      gateway: {
+        configured: gatewayOk,
+        environment: gatewayEnvironment,
+        error: gatewayError,
+        usingLegacyNames: Boolean(
+          process.env.FASTPAY_PUBLIC_KEY && !process.env.SAFEPAY_PUBLIC_KEY
+        )
+      },
       storageConfigured: storageMissing.length === 0,
       storageMissing
     },

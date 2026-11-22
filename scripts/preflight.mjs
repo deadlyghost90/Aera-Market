@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Deployment preflight. Run before pushing to Vercel:
  *
  *   node scripts/preflight.mjs
@@ -19,6 +19,13 @@ if (existsSync('.env.local')) {
   }
 }
 
+// Accept the legacy FASTPAY_* names so older deployments keep validating.
+for (const key of ['PUBLIC_KEY', 'SECRET_KEY', 'WEBHOOK_SECRET', 'ENVIRONMENT', 'BASE_URL', 'CHECKOUT_URL']) {
+  if (!process.env[`SAFEPAY_${key}`] && process.env[`FASTPAY_${key}`]) {
+    process.env[`SAFEPAY_${key}`] = process.env[`FASTPAY_${key}`];
+  }
+}
+
 const results = [];
 const add = (name, ok, hint) => results.push({ name, ok, hint });
 const value = (key) => (process.env[key] ?? '').trim();
@@ -27,11 +34,11 @@ const REQUIRED = [
   'FIREBASE_PROJECT_ID',
   'FIREBASE_DATABASE_URL',
   'FIREBASE_API_KEY',
-  'FASTPAY_PUBLIC_KEY',
-  'FASTPAY_SECRET_KEY',
-  'FASTPAY_ENVIRONMENT',
-  'FASTPAY_BASE_URL',
-  'FASTPAY_CHECKOUT_URL',
+  'SAFEPAY_PUBLIC_KEY',
+  'SAFEPAY_SECRET_KEY',
+  'SAFEPAY_ENVIRONMENT',
+  'SAFEPAY_BASE_URL',
+  'SAFEPAY_CHECKOUT_URL',
   'APP_ORIGIN',
   'B2_ENDPOINT',
   'B2_REGION',
@@ -68,11 +75,11 @@ const origin = value('APP_ORIGIN');
 add('APP_ORIGIN is https', origin.startsWith('https://'), 'Vercel needs an https origin; http breaks the __Host- cookie');
 add('APP_ORIGIN has no trailing slash', origin.length > 0 && !origin.endsWith('/'), 'remove the trailing slash');
 
-const env = value('FASTPAY_ENVIRONMENT');
+const env = value('SAFEPAY_ENVIRONMENT');
 add('Gateway environment', env === 'sandbox' || env === 'production', 'must be sandbox or production');
 add(
   'Gateway base URL matches the environment',
-  env === 'production' ? value('FASTPAY_BASE_URL').includes('api.getsafepay.com') && !value('FASTPAY_BASE_URL').includes('sandbox') : value('FASTPAY_BASE_URL').includes('sandbox'),
+  env === 'production' ? value('SAFEPAY_BASE_URL').includes('api.getsafepay.com') && !value('SAFEPAY_BASE_URL').includes('sandbox') : value('SAFEPAY_BASE_URL').includes('sandbox'),
   'sandbox and production use different hosts'
 );
 

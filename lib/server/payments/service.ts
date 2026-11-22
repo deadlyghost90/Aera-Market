@@ -1,4 +1,4 @@
-import { env } from '../config/env';
+﻿import { env, gateway as gatewaySettings } from '../config/env';
 import { AppError, badRequest, forbidden, notFound } from '../utils/errors';
 import { newId, paymentIdempotencyKey } from '../utils/ids';
 import { logger } from '../utils/logger';
@@ -110,7 +110,7 @@ export async function initiatePayment(input: {
     productId: firstItem.productId,
     productName,
     gateway: 'safepay',
-    gatewayEnvironment: config.FASTPAY_ENVIRONMENT,
+    gatewayEnvironment: gatewaySettings().environment,
     gatewayTrackerId: null,
     gatewayTransactionId: null,
     gatewayReference: null,
@@ -210,7 +210,7 @@ export async function initiatePayment(input: {
       orderId: order.id,
       amountMinor: payment.amountMinor,
       gateway: 'safepay',
-      environment: config.FASTPAY_ENVIRONMENT
+      environment: gatewaySettings().environment
     },
     ipHash: input.ipHash ?? null
   });

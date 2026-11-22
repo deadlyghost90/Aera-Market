@@ -59,12 +59,12 @@ Add these in **Project â†’ Settings â†’ Environment Variables** for *P
 | `FIREBASE_CLIENT_EMAIL` | service account email |
 | `FIREBASE_PRIVATE_KEY` | service account key (paste with `\n` escapes) |
 | `FIREBASE_API_KEY` | web API key |
-| `FASTPAY_PUBLIC_KEY` | Safepay public key |
-| `FASTPAY_SECRET_KEY` | Safepay secret key |
-| `FASTPAY_WEBHOOK_SECRET` | webhook signing secret (optional) |
-| `FASTPAY_ENVIRONMENT` | `sandbox` first, then `production` |
-| `FASTPAY_BASE_URL` | `https://sandbox.api.getsafepay.com` |
-| `FASTPAY_CHECKOUT_URL` | `https://sandbox.api.getsafepay.com/components` |
+| `SAFEPAY_PUBLIC_KEY` | Safepay public key |
+| `SAFEPAY_SECRET_KEY` | Safepay secret key |
+| `SAFEPAY_WEBHOOK_SECRET` | webhook signing secret (optional) |
+| `SAFEPAY_ENVIRONMENT` | `sandbox` first, then `production` |
+| `SAFEPAY_BASE_URL` | `https://sandbox.api.getsafepay.com` |
+| `SAFEPAY_CHECKOUT_URL` | `https://sandbox.api.getsafepay.com/components` |
 | `APP_ORIGIN` | exact deployed origin, e.g. `https://aera-market.vercel.app` |
 | `PLATFORM_COMMISSION_PERCENT` | `40` |
 | `PAYMENTS_ENABLED` | `true` |
@@ -120,7 +120,7 @@ In the Safepay dashboard set the webhook URL to:
 https://<domain>/api/payments/webhook
 ```
 
-The gateway secret must match `FASTPAY_SECRET_KEY` (or `FASTPAY_WEBHOOK_SECRET`).
+The gateway secret must match `SAFEPAY_SECRET_KEY` (or `SAFEPAY_WEBHOOK_SECRET`).
 
 ---
 

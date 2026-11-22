@@ -1,4 +1,4 @@
-# Payment System — Implementation Notes
+﻿# Payment System â€” Implementation Notes
 
 This document describes what was built, what was verified against the live
 gateway, and what remains manual. It is the reference for deployment and for the
@@ -9,17 +9,17 @@ next development phase.
 ## 1. Verified gateway contract
 
 The merchant account is provisioned with **Safepay** (`getsafepay.com`), not
-`fast-pay.cash`. The credentials in `Env.txt` (`sec_…` public key + 64-hex secret)
+`fast-pay.cash`. The credentials in `Env.txt` (`sec_â€¦` public key + 64-hex secret)
 match Safepay's format, and the integration was confirmed against the sandbox on
 2026-11-22.
 
 | Call | Result |
 |---|---|
-| `POST https://sandbox.api.getsafepay.com/order/v1/init` with `{environment, amount, currency, client}` | **HTTP 200**, returned `data.token = track_…` |
+| `POST https://sandbox.api.getsafepay.com/order/v1/init` with `{environment, amount, currency, client}` | **HTTP 200**, returned `data.token = track_â€¦` |
 | `GET https://sandbox.api.getsafepay.com/order/v1/{tracker}` | **HTTP 200**, tracker JSON including `state` |
-| Checkout URL | `https://sandbox.api.getsafepay.com/components?env=sandbox&beacon=<tracker>&source=…&order_id=…&redirect_url=…&cancel_url=…` |
+| Checkout URL | `https://sandbox.api.getsafepay.com/components?env=sandbox&beacon=<tracker>&source=â€¦&order_id=â€¦&redirect_url=â€¦&cancel_url=â€¦` |
 | Redirect signature | `hex(HMAC-SHA256(tracker, secretKey))` posted back as `sig` |
-| Refund API | **No public endpoint** (`/refund`, `/order/v1/{t}/refund` → 404). Refunds are executed in the Safepay dashboard. |
+| Refund API | **No public endpoint** (`/refund`, `/order/v1/{t}/refund` â†’ 404). Refunds are executed in the Safepay dashboard. |
 
 Production base URL: `https://api.getsafepay.com`; production checkout:
 `https://www.getsafepay.com/components`. Both are environment-driven, so no code
@@ -36,27 +36,27 @@ initiatePayment(input)          -> { tracker, checkoutUrl }
 fetchTracker(tracker)           -> normalised state (paid / failed / cancelled)
 verifyRedirectSignature(t, sig) -> boolean
 verifyWebhookSignature(...)     -> boolean
-normaliseWebhook(rawBody)       -> { eventId, tracker, isPaid, … }
+normaliseWebhook(rawBody)       -> { eventId, tracker, isPaid, â€¦ }
 ```
 
 `lib/server/payments/registry.ts` maps `safepay` to the adapter and exposes a
 catalogue where every other provider is `COMING_SOON`. Adding a provider means
-implementing this interface and registering it — payment history, orders,
+implementing this interface and registering it â€” payment history, orders,
 commissions and refunds stay untouched.
 
 ---
 
 ## 3. End-to-end flow
 
-1. `POST /api/orders` — server re-prices every product from the database,
+1. `POST /api/orders` â€” server re-prices every product from the database,
    snapshots title and price, creates the order as `PENDING_PAYMENT`.
-2. `POST /api/payments/initiate` — verifies ownership and order state, computes
+2. `POST /api/payments/initiate` â€” verifies ownership and order state, computes
    the commission split, creates the payment record, calls the gateway, stores
    the tracker and the hosted checkout URL, returns the URL.
 3. Customer pays on the hosted page.
 4. Gateway redirects the browser (form POST) to `/api/payments/return`:
-   signature verified → **gateway queried** → only then settled.
-5. Gateway webhook `POST /api/payments/webhook` — signature verified, event id
+   signature verified â†’ **gateway queried** â†’ only then settled.
+5. Gateway webhook `POST /api/payments/webhook` â€” signature verified, event id
    deduplicated, tracker resolved, gateway re-queried, then settled.
 6. Settlement writes, atomically: payment status, payment event, order status,
    ledger entries. Seller balance is credited idempotently afterwards.
@@ -76,13 +76,13 @@ Realtime Database nodes, with the SQL concept each one replaces:
 |---|---|---|
 | `payments/{paymentId}` | Permanent financial record | `idempotencyKey` unique via `idempotency/`; `gatewayTrackerId` unique via `gatewayTrackers/` |
 | `paymentsByUser/{uid}/{paymentId}` | Customer history index | append-only |
-| `paymentsByOrder/{orderId}/{paymentId}` | Order ↔ payment link | one open payment per order |
+| `paymentsByOrder/{orderId}/{paymentId}` | Order â†” payment link | one open payment per order |
 | `paymentEvents/{paymentId}/{eventId}` | Immutable status history | append-only, never updated |
-| `gatewayTrackers/{tracker}` | `tracker → paymentId` uniqueness index | transactional claim, never overwritten |
+| `gatewayTrackers/{tracker}` | `tracker â†’ paymentId` uniqueness index | transactional claim, never overwritten |
 | `idempotency/{key}` | Retry protection | transactional claim |
 | `webhookEvents/{provider}/{eventId}` | Replay protection | transactional claim, released on processing failure |
 | `refunds/{refundId}` | Refund requests and decisions | one open refund per payment |
-| `refundsByUser/{uid}/{refundId}` | Customer refund index | — |
+| `refundsByUser/{uid}/{refundId}` | Customer refund index | â€” |
 | `ledger/{entryId}` | Append-only double-sided journal | never updated or deleted |
 | `sellerBalances/{sellerId}` | Materialised seller balance | `applied` map makes credits idempotent |
 | `orders/{orderId}` | Order + immutable item snapshot | status machine enforced server-side |
@@ -103,7 +103,7 @@ is ever used for storage or arithmetic.
 
 ### Relationships
 
-`user → orders → payments → refunds`, and `payments → ledger → sellerBalances`.
+`user â†’ orders â†’ payments â†’ refunds`, and `payments â†’ ledger â†’ sellerBalances`.
 Deleting an order from a customer's history never deletes the payment, ledger or
 audit rows.
 
@@ -112,11 +112,11 @@ audit rows.
 ## 5. Status machine
 
 ```
-CREATED → PENDING → PROCESSING → PAID
-   │         │           │
-   └─────────┴───────────┴──→ FAILED / CANCELLED   (terminal for browsers)
+CREATED â†’ PENDING â†’ PROCESSING â†’ PAID
+   â”‚         â”‚           â”‚
+   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â†’ FAILED / CANCELLED   (terminal for browsers)
 
-PAID → REFUND_PENDING → PARTIALLY_REFUNDED → REFUNDED
+PAID â†’ REFUND_PENDING â†’ PARTIALLY_REFUNDED â†’ REFUNDED
 ```
 
 Rules enforced in `lib/server/payments/state.ts`:
@@ -140,7 +140,7 @@ For PKR 1,000 (100000 minor units):
 | Entry | Party | Amount |
 |---|---|---|
 | `SALE` | seller | +100000 |
-| `COMMISSION` | seller | −40000 |
+| `COMMISSION` | seller | âˆ’40000 |
 | `COMMISSION` | platform | +40000 |
 
 Seller balance = 60000. Platform revenue = 40000.
@@ -148,7 +148,7 @@ Seller balance = 60000. Platform revenue = 40000.
 On refund the seller funds only their net share and the platform reverses its
 commission:
 
-Refund of PKR 400 → `REFUND` −24000 (seller), `COMMISSION_REVERSAL` −16000
+Refund of PKR 400 â†’ `REFUND` âˆ’24000 (seller), `COMMISSION_REVERSAL` âˆ’16000
 (platform). Seller keeps 36000, which is exactly 60% of the unrefunded PKR 600.
 
 Seller balances are credited through a transaction guarded by an `applied` map, so
@@ -165,7 +165,7 @@ webhook replays and retries cannot double-credit.
 3. Admin transfers the money in the Safepay dashboard, then marks the refund
    **completed** with the gateway refund reference.
 
-The status becomes `PARTIALLY_REFUNDED` or `REFUNDED` only at step 3 — never on
+The status becomes `PARTIALLY_REFUNDED` or `REFUNDED` only at step 3 â€” never on
 request or approval. Full and partial refunds are both supported.
 
 **Why manual:** Safepay exposes no refund API. Claiming automated gateway refunds
@@ -204,12 +204,12 @@ supports it.
 | `FIREBASE_DATABASE_URL` | RTDB URL (`europe-west1`) |
 | `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` | Service account (or use `FIREBASE_SERVICE_ACCOUNT_B64`) |
 | `FIREBASE_API_KEY` | Identity Toolkit sign-in (public identifier, referrer-restricted) |
-| `FASTPAY_PUBLIC_KEY` | Safepay dashboard **Public key** (`sec_…`) |
-| `FASTPAY_SECRET_KEY` | Safepay dashboard **Secret key** (signs redirect payloads) |
-| `FASTPAY_WEBHOOK_SECRET` | Optional separate webhook secret; falls back to the secret key |
-| `FASTPAY_ENVIRONMENT` | `sandbox` or `production` |
-| `FASTPAY_BASE_URL` | `https://sandbox.api.getsafepay.com` or `https://api.getsafepay.com` |
-| `FASTPAY_CHECKOUT_URL` | `…/components` for the matching environment |
+| `SAFEPAY_PUBLIC_KEY` | Safepay dashboard **Public key** (`sec_â€¦`) |
+| `SAFEPAY_SECRET_KEY` | Safepay dashboard **Secret key** (signs redirect payloads) |
+| `SAFEPAY_WEBHOOK_SECRET` | Optional separate webhook secret; falls back to the secret key |
+| `SAFEPAY_ENVIRONMENT` | `sandbox` or `production` |
+| `SAFEPAY_BASE_URL` | `https://sandbox.api.getsafepay.com` or `https://api.getsafepay.com` |
+| `SAFEPAY_CHECKOUT_URL` | `â€¦/components` for the matching environment |
 | `APP_ORIGIN` | Exact public origin, used for redirect and CSRF checks |
 | `PLATFORM_COMMISSION_PERCENT` | `40` |
 | `SESSION_COOKIE_NAME` | `__Host-aera_session` |
@@ -222,15 +222,15 @@ Never commit real values. `.env.example` contains placeholders only.
 
 ## 10. Gateway configuration
 
-1. Safepay dashboard → **Developers / API** → copy the Public key and Secret key
+1. Safepay dashboard â†’ **Developers / API** â†’ copy the Public key and Secret key
    into Vercel (never into the repo).
 2. Set the webhook endpoint to `https://<your-domain>/api/payments/webhook`.
-3. Copy the webhook signing secret into `FASTPAY_WEBHOOK_SECRET` if it differs
+3. Copy the webhook signing secret into `SAFEPAY_WEBHOOK_SECRET` if it differs
    from the account secret key.
 4. Set the success/return URL behaviour through the `redirect_url` we send
    (`/api/payments/return`), and a cancel URL (`/order-result?state=cancelled`).
-5. Start in sandbox: `FASTPAY_ENVIRONMENT=sandbox` with the sandbox key pair.
-   Production uses a different key pair — never reuse sandbox keys in production.
+5. Start in sandbox: `SAFEPAY_ENVIRONMENT=sandbox` with the sandbox key pair.
+   Production uses a different key pair â€” never reuse sandbox keys in production.
 
 Sandbox test cards are issued by Safepay in the sandbox dashboard.
 
@@ -286,10 +286,10 @@ Sandbox verification checklist (must be repeated after any gateway change):
 1. Start checkout from the UI and pay with a sandbox card.
 2. Confirm `payments/{id}` becomes `PAID`, order `FULFILLED`, ledger rows exist,
    seller balance is credited once.
-3. Replay the webhook (`curl` twice) — second call must be a duplicate and must
+3. Replay the webhook (`curl` twice) â€” second call must be a duplicate and must
    not change balances.
-4. Send a webhook with a wrong signature — must return 401 and change nothing.
-5. Request a refund, approve it, complete it with a reference — confirm
+4. Send a webhook with a wrong signature â€” must return 401 and change nothing.
+5. Request a refund, approve it, complete it with a reference â€” confirm
    `PARTIALLY_REFUNDED` / `REFUNDED` and the reversal entries.
 
 **Nothing in this repository claims a live transaction has been completed.** The
@@ -300,22 +300,22 @@ account before launch.
 
 ## 13. Known limitations
 
-1. **No automated gateway refunds** — Safepay has no public refund API; completion
+1. **No automated gateway refunds** â€” Safepay has no public refund API; completion
    is an admin step recording the reference.
-2. **Webhook payload shape** — the documented redirect payload is definitive; the
+2. **Webhook payload shape** â€” the documented redirect payload is definitive; the
    webhook body is normalised defensively and both signing schemes are accepted.
    If Safepay publishes a stricter schema, tighten `normaliseWebhook`.
 3. **Admin analytics scan a bounded window** (1,000 newest payments) and report
    `scanComplete: false` beyond it. Add a rollup job before volume grows.
-4. **Seller payouts are not automated** — balances are ledger-derived; transfers
+4. **Seller payouts are not automated** â€” balances are ledger-derived; transfers
    are manual.
-5. **No entitlement/download delivery yet** — purchases are recorded in the
+5. **No entitlement/download delivery yet** â€” purchases are recorded in the
    ledger but the buyer library and B2 download authorisation are a separate
    module.
 6. **Single currency** (PKR) is enforced at the gateway level.
 7. **`applied` maps in seller balances** grow with transaction count; archive them
    once a ledger rollup exists.
-8. **UI is structural only** — styling and layout are handled separately.
+8. **UI is structural only** â€” styling and layout are handled separately.
 
 ---
 

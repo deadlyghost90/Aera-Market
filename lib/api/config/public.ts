@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { route, sendJson } from '../../server/utils/http';
 import { gatewayCatalogue } from '../../server/payments/registry';
-import { env } from '../../server/config/env';
+import { env, gateway } from '../../server/config/env';
 
 export default route(async (_req: VercelRequest, res: VercelResponse) => {
   let paymentsEnabled = false;
@@ -12,7 +12,7 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
     const config = env();
     paymentsEnabled = config.PAYMENTS_ENABLED;
     commissionPercent = config.PLATFORM_COMMISSION_PERCENT;
-    environment = config.FASTPAY_ENVIRONMENT;
+    environment = gateway().environment;
   } catch {
     paymentsEnabled = false;
   }
