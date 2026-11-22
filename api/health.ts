@@ -56,6 +56,10 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
     }
   }
 
+  const storageMissing = ['B2_ENDPOINT', 'B2_REGION', 'B2_BUCKET_NAME', 'B2_KEY_ID', 'B2_APPLICATION_KEY'].filter(
+    (key) => !process.env[key]
+  );
+
   const healthy = missing.length === 0 && database.ok;
 
   sendJson(res, healthy ? 200 : 503, {
@@ -67,7 +71,9 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
       missing,
       serviceAccount: hasServiceAccount,
       paymentsEnabled: process.env.PAYMENTS_ENABLED ?? 'true',
-      gatewayEnvironment: process.env.FASTPAY_ENVIRONMENT ?? 'unset'
+      gatewayEnvironment: process.env.FASTPAY_ENVIRONMENT ?? 'unset',
+      storageConfigured: storageMissing.length === 0,
+      storageMissing
     },
     database
   });

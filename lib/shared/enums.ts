@@ -1,7 +1,6 @@
 /**
  * Domain enumerations shared by API, tests and documentation.
- * Plain const objects (not TS enums) so they survive compilation to CommonJS
- * and can be imported anywhere without runtime helpers.
+ * Plain const objects (not TS enums) so they survive compilation to CommonJS.
  */
 
 export const ROLES = ['BUYER', 'SELLER', 'ADMIN'] as const;
@@ -67,8 +66,62 @@ export type LedgerEntryType = (typeof LEDGER_ENTRY_TYPE)[number];
 export const GATEWAY_ID = ['safepay'] as const;
 export type GatewayId = (typeof GATEWAY_ID)[number];
 
-/** Gateways that are wired but not yet launched. Rendered as "Coming Soon". */
 export const COMING_SOON_GATEWAYS = ['stripe', 'paypal', 'jazzcash', 'easypaisa'] as const;
 
-export const PRODUCT_STATUS = ['DRAFT', 'PENDING_REVIEW', 'ACTIVE', 'REJECTED'] as const;
+/* ------------------------------------------------------------------ */
+/* Seller (author) model: any buyer may apply, admins approve.          */
+/* ------------------------------------------------------------------ */
+
+export const SELLER_STATUS = ['PENDING', 'APPROVED', 'SUSPENDED', 'REJECTED'] as const;
+export type SellerStatus = (typeof SELLER_STATUS)[number];
+
+/* ------------------------------------------------------------------ */
+/* Product lifecycle: Envato-style submission and review.               */
+/* ------------------------------------------------------------------ */
+
+export const PRODUCT_STATUS = [
+  'DRAFT',
+  'PENDING_REVIEW',
+  'CHANGES_REQUESTED',
+  'APPROVED',
+  'REJECTED',
+  'SUSPENDED'
+] as const;
 export type ProductStatus = (typeof PRODUCT_STATUS)[number];
+
+/** What the seller *claims* they are selling. Files are checked against it. */
+export const PRODUCT_KIND = [
+  'SOURCE_CODE',
+  'WEBSITE_TEMPLATE',
+  'SCRIPT_AUTOMATION',
+  'PLUGIN_EXTENSION',
+  'API_TOOL',
+  'SOFTWARE_APP',
+  'MINECRAFT_RESOURCE',
+  'GAME_ASSET',
+  'UI_KIT',
+  'GRAPHICS',
+  'OTHER'
+] as const;
+export type ProductKind = (typeof PRODUCT_KIND)[number];
+
+export const LICENSE_TYPE = ['STANDARD', 'EXTENDED'] as const;
+export type LicenseType = (typeof LICENSE_TYPE)[number];
+
+export const REVIEW_DECISION = ['APPROVE', 'REJECT', 'REQUEST_CHANGES'] as const;
+export type ReviewDecision = (typeof REVIEW_DECISION)[number];
+
+/** Envato-style rejection reasons, shown to the seller. */
+export const REJECTION_REASONS = [
+  'FILES_DO_NOT_MATCH_DESCRIPTION',
+  'QUALITY_BELOW_STANDARD',
+  'INCOMPLETE_PACKAGE',
+  'MISSING_DOCUMENTATION',
+  'LICENSE_OR_COPYRIGHT_ISSUE',
+  'PROHIBITED_CONTENT',
+  'DUPLICATE_SUBMISSION',
+  'MISLEADING_PREVIEW',
+  'TECHNICAL_ERRORS',
+  'OTHER'
+] as const;
+export type RejectionReason = (typeof REJECTION_REASONS)[number];

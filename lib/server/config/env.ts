@@ -21,6 +21,13 @@ const schema = z.object({
   FASTPAY_CHECKOUT_URL: z.string().url(),
 
   APP_ORIGIN: z.string().url(),
+
+  B2_ENDPOINT: z.string().url().optional(),
+  B2_REGION: z.string().optional(),
+  B2_BUCKET_NAME: z.string().optional(),
+  B2_KEY_ID: z.string().optional(),
+  B2_APPLICATION_KEY: z.string().optional(),
+
   PLATFORM_COMMISSION_PERCENT: z.coerce.number().int().min(0).max(100).default(40),
   SESSION_COOKIE_NAME: z.string().default('__Host-aera_session'),
   SESSION_TTL_DAYS: z.coerce.number().int().min(1).max(14).default(5),

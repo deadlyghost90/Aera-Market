@@ -28,3 +28,21 @@ export async function requireAdmin(req: VercelRequest): Promise<AuthContext> {
 export async function requireSeller(req: VercelRequest): Promise<AuthContext> {
   return requireRole(req, ['SELLER', 'ADMIN']);
 }
+
+/**
+ * Selling requires an *approved seller profile*, not just the SELLER role.
+ * Any buyer may apply; only an admin unlocks publishing.
+ */
+export async function requireApprovedSeller(req: VercelRequest): Promise<AuthContext> {
+  const context = await requireUser(req);
+  const { getSeller } = await import('../database/sellers.repo');
+  const seller = await getSeller(context.uid);
+
+  if (!seller) {
+    throw forbidden('Apply as an author before publishing products');
+  }
+  if (seller.status !== 'APPROVED') {
+    throw forbidden('Your author account is awaiting approval');
+  }
+  return context;
+}

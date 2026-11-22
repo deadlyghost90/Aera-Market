@@ -1,12 +1,17 @@
 import type {
   GatewayId,
   LedgerEntryType,
+  LicenseType,
   OrderStatus,
   PaymentEventType,
   PaymentStatus,
+  ProductKind,
   ProductStatus,
   RefundStatus,
+  RejectionReason,
+  ReviewDecision,
   Role,
+  SellerStatus,
   UserStatus
 } from './enums';
 
@@ -20,19 +25,111 @@ export interface UserRecord {
   updatedAt: number;
 }
 
+/* ------------------------------------------------------------------ */
+/* Authors / sellers                                                   */
+/* ------------------------------------------------------------------ */
+
+export interface Seller {
+  uid: string;
+  displayName: string;
+  bio: string;
+  country: string;
+  status: SellerStatus;
+  /** Platform commission for this author (defaults to the global rate). */
+  commissionPercent: number;
+  payoutMethod: string | null;
+  rejectionReason: string | null;
+  createdAt: number;
+  updatedAt: number;
+  approvedAt: number | null;
+  stats: {
+    products: number;
+    sales: number;
+    grossMinor: number;
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* Catalogue                                                           */
+/* ------------------------------------------------------------------ */
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  /** Product kinds accepted in this category. */
+  allowedKinds: ProductKind[];
+  /** Lower-case extensions accepted for delivery files. */
+  allowedExtensions: string[];
+  maxFileMb: number;
+  minPriceMinor: number;
+  sort: number;
+  active: boolean;
+}
+
+export interface ProductFile {
+  id: string;
+  /** Storage key inside the private bucket. */
+  key: string;
+  name: string;
+  sizeBytes: number;
+  contentType: string;
+  uploadedAt: number;
+  verified: boolean;
+}
+
+export interface ReviewCheck {
+  id: string;
+  label: string;
+  passed: boolean;
+  /** Blocking failures stop submission; warnings only inform the reviewer. */
+  blocking: boolean;
+  detail: string;
+}
+
+export interface ReviewRecord {
+  submittedAt: number;
+  automatedPassed: boolean;
+  checks: ReviewCheck[];
+  reviewerId: string | null;
+  decidedAt: number | null;
+  decision: ReviewDecision | null;
+  note: string | null;
+  reason: RejectionReason | null;
+}
+
 export interface Product {
   id: string;
   sellerId: string;
+  sellerName: string;
   title: string;
   slug: string;
+  summary: string;
   description: string;
+  categoryId: string;
+  kind: ProductKind;
+  license: LicenseType;
+  tags: string[];
   priceMinor: number;
   currency: string;
   status: ProductStatus;
-  categoryId: string | null;
+  files: ProductFile[];
+  previewUrl: string | null;
+  demoUrl: string | null;
+  documentationUrl: string | null;
+  review: ReviewRecord | null;
+  rejectionNote: string | null;
+  salesCount: number;
+  rating: number;
   createdAt: number;
   updatedAt: number;
+  approvedAt: number | null;
 }
+
+/* ------------------------------------------------------------------ */
+/* Orders, payments, refunds (unchanged shape)                         */
+/* ------------------------------------------------------------------ */
 
 export interface OrderItem {
   productId: string;
@@ -55,16 +152,10 @@ export interface Order {
   updatedAt: number;
 }
 
-/**
- * A permanent financial record. It is never deleted when a buyer removes an
- * order from their own history, and it is the single source of truth for
- * money movement.
- */
 export interface Payment {
   id: string;
   orderId: string;
   userId: string;
-  /** Snapshot fields - they must not change if the product is edited later. */
   productId: string;
   productName: string;
   gateway: GatewayId;
@@ -73,7 +164,6 @@ export interface Payment {
   gatewayTransactionId: string | null;
   gatewayReference: string | null;
   gatewayResponseRef: string | null;
-  /** Hosted checkout URL for the current tracker, so retries resume safely. */
   checkoutUrl: string | null;
   paymentMethod: string | null;
   status: PaymentStatus;
@@ -128,7 +218,6 @@ export interface LedgerEntry {
   orderId: string;
   sellerId: string;
   type: LedgerEntryType;
-  /** Signed: positive credits the seller, negative debits. */
   amountMinor: number;
   currency: string;
   createdAt: number;

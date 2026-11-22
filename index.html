@@ -3,33 +3,86 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aera Market</title>
+  <title>Aera Market — digital products from vetted authors</title>
+  <meta name="description" content="Source code, templates, plugins, Minecraft resources and game assets. Every product reviewed before it goes live.">
   <link rel="stylesheet" href="/css/base.css">
 </head>
 <body>
-  <header class="site-header">
-    <a href="/index.html" class="brand">Aera Market</a>
-    <nav>
-      <a href="/index.html">Explore</a>
-      <a href="/buyer-payments.html">My payments</a>
-      <a href="/login.html">Sign in</a>
-    </nav>
-  </header>
+  <header id="site-header"></header>
 
-  <main class="container">
-    <h1>Digital products from independent sellers</h1>
-    <p class="muted">Source code, templates, plugins, APIs and game assets.</p>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <span class="hero-eyebrow">Reviewed before it goes live</span>
+        <h1>Digital products from authors who <span class="grad">actually ship</span>.</h1>
+        <p class="lead">
+          Source code, templates, plugins, Minecraft resources and game assets.
+          Every submission is checked against what the author claims before buyers see it.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/explore.html">Browse the market</a>
+          <a class="btn btn-ghost" href="/seller-dashboard.html">Become an author</a>
+        </div>
 
-    <section id="catalogue" aria-live="polite">
-      <p id="catalogue-status" class="muted">Loading products…</p>
-      <ul id="product-list" class="product-grid"></ul>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong id="stat-products">—</strong><span>Published products</span></div>
+          <div class="hero-stat"><strong id="stat-categories">—</strong><span>Categories</span></div>
+          <div class="hero-stat"><strong>40%</strong><span>Platform commission</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="categories">
+      <div class="container">
+        <div class="spread">
+          <h2>Browse by category</h2>
+          <a class="nav-link" href="/explore.html">All products →</a>
+        </div>
+        <div class="chips mt-3" id="category-chips"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="spread">
+          <h2>Fresh from the review queue</h2>
+          <span class="muted small">Approved in the last few days</span>
+        </div>
+        <ul class="product-grid mt-3" id="featured-grid"></ul>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container">
+        <h2>How selling works</h2>
+        <p class="muted mt-1">Strict on purpose — buyers trust the catalogue because nothing skips review.</p>
+        <div class="stat-grid mt-3">
+          <div class="card">
+            <span class="badge badge-accent">Step 1</span>
+            <h3 class="mt-2">Apply as an author</h3>
+            <p class="muted small mt-1">Any account can apply. An admin reviews your profile before you can publish.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-accent">Step 2</span>
+            <h3 class="mt-2">Upload the real files</h3>
+            <p class="muted small mt-1">Attach the deliverable and a preview. Files are checked against the product type you claim.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-accent">Step 3</span>
+            <h3 class="mt-2">Automatic checks</h3>
+            <p class="muted small mt-1">Missing files, wrong file types or a mismatch with your claim block submission immediately.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-accent">Step 4</span>
+            <h3 class="mt-2">Human review</h3>
+            <p class="muted small mt-1">A reviewer approves, rejects or requests changes. Only approved products are listed.</p>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <p>Aera Intelligence (Pvt) Ltd.</p>
-  </footer>
-
+  <footer id="site-footer"></footer>
   <script type="module" src="/js/pages/home.js"></script>
 </body>
 </html>

@@ -1,39 +1,26 @@
 /**
- * Development seed: creates a seller account and one published product.
+ * Development seed: default categories, an admin and an approved author.
  *
  *   node scripts/seed.mjs
- *
- * Reads .env.local (or the process environment). Never run against production
- * with real customer data.
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
 
-function loadEnvFile() {
-  if (!existsSync('.env.local')) return;
+if (existsSync('.env.local')) {
   const content = readFileSync('.env.local', 'utf8');
   for (const line of content.split(/\r?\n/)) {
     const match = /^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/.exec(line);
     if (!match) continue;
-    const [, key, rawValue] = match;
+    const [, key, raw] = match;
     if (!key || process.env[key] !== undefined) continue;
-    let value = rawValue ?? '';
-    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-      value = value.slice(1, -1);
-    }
-    process.env[key] = value.replace(/\\n/g, '\n');
+    process.env[key] = (raw ?? '').replace(/^"|"$/g, '').replace(/\\n/g, '\n');
   }
 }
 
-loadEnvFile();
-
 const projectId = process.env.FIREBASE_PROJECT_ID;
 const databaseURL = process.env.FIREBASE_DATABASE_URL;
-const email = process.argv[2] ?? 'seller@aeramarket.test';
-const password = process.argv[3] ?? 'AeraMarket123';
-
 if (!projectId || !databaseURL) {
   console.error('FIREBASE_PROJECT_ID and FIREBASE_DATABASE_URL are required');
   process.exit(1);
@@ -42,7 +29,9 @@ if (!projectId || !databaseURL) {
 const credential = process.env.FIREBASE_SERVICE_ACCOUNT_B64
   ? cert(
       (() => {
-        const parsed = JSON.parse(Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_B64, 'base64').toString('utf8'));
+        const parsed = JSON.parse(
+          Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_B64, 'base64').toString('utf8')
+        );
         return {
           projectId: parsed.project_id,
           clientEmail: parsed.client_email,
@@ -60,45 +49,85 @@ const app = initializeApp({ credential, databaseURL });
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-async function ensureUser() {
-  try {
-    const existing = await auth.getUserByEmail(email);
-    return existing.uid;
-  } catch {
-    const created = await auth.createUser({ email, password, displayName: 'Demo Seller', emailVerified: true });
-    return created.uid;
-  }
-}
+const CATEGORIES = [
+  ['source-code', 'Source Code & Projects', ['SOURCE_CODE', 'SOFTWARE_APP', 'API_TOOL'], ['zip', 'rar', 'js', 'ts', 'py', 'php', 'json', 'md'], 500, 50000, 10],
+  ['website-templates', 'Website Templates', ['WEBSITE_TEMPLATE', 'UI_KIT'], ['zip', 'html', 'css', 'js', 'png', 'jpg', 'svg'], 300, 30000, 20],
+  ['scripts-automation', 'Scripts & Automation', ['SCRIPT_AUTOMATION', 'SOURCE_CODE'], ['zip', 'py', 'js', 'ts', 'sh', 'json', 'yml'], 100, 20000, 30],
+  ['plugins-extensions', 'Plugins & Extensions', ['PLUGIN_EXTENSION', 'SOURCE_CODE'], ['zip', 'jar', 'php', 'js', 'json'], 200, 20000, 40],
+  ['minecraft', 'Minecraft Resources', ['MINECRAFT_RESOURCE', 'PLUGIN_EXTENSION', 'GAME_ASSET'], ['zip', 'jar', 'mcpack', 'schem', 'png', 'yml'], 500, 10000, 50],
+  ['game-assets', 'Game Development Assets', ['GAME_ASSET', 'GRAPHICS'], ['zip', 'fbx', 'obj', 'glb', 'blend', 'unitypackage', 'png', 'wav'], 1000, 15000, 60],
+  ['ui-kits-graphics', 'UI Kits & Graphics', ['UI_KIT', 'GRAPHICS'], ['zip', 'fig', 'sketch', 'psd', 'ai', 'svg', 'png', 'jpg'], 300, 10000, 70],
+  ['apis-tools', 'APIs & Developer Tools', ['API_TOOL', 'SOURCE_CODE'], ['zip', 'json', 'yaml', 'js', 'ts', 'py', 'md'], 100, 10000, 80]
+];
 
-const uid = await ensureUser();
 const now = Date.now();
 
-await db.ref(`users/${uid}`).update({
-  uid,
-  email,
-  displayName: 'Demo Seller',
-  role: 'SELLER',
-  status: 'ACTIVE',
-  createdAt: now,
-  updatedAt: now
-});
+for (const [slug, name, allowedKinds, allowedExtensions, maxFileMb, minPriceMinor, sort] of CATEGORIES) {
+  const id = `cat_${slug}`;
+  const exists = await db.ref(`categories/${id}`).get();
+  if (exists.exists()) continue;
 
-const productId = 'prod_demo_source_code';
-await db.ref(`products/${productId}`).set({
-  id: productId,
-  sellerId: uid,
-  title: 'Minecraft Plugin Starter (demo)',
-  slug: productId,
-  description:
-    'A demonstration listing used to exercise the checkout and payment flow end to end.',
-  priceMinor: 100000,
-  currency: 'PKR',
-  status: 'ACTIVE',
-  categoryId: null,
-  createdAt: now,
-  updatedAt: now
-});
+  await db.ref().update({
+    [`categories/${id}`]: {
+      id,
+      name,
+      slug,
+      description: `${name} on Aera Market.`,
+      allowedKinds,
+      allowedExtensions,
+      maxFileMb,
+      minPriceMinor,
+      sort,
+      active: true
+    },
+    [`categorySlugs/${slug}`]: id
+  });
+  console.log(`category: ${name}`);
+}
 
-console.log(`Seller ready: ${email} (uid ${uid})`);
-console.log(`Product ready: ${productId} at PKR 1,000.00`);
+async function ensureUser(email, password, displayName, role) {
+  let uid;
+  try {
+    uid = (await auth.getUserByEmail(email)).uid;
+  } catch {
+    const created = await auth.createUser({ email, password, displayName, emailVerified: true });
+    uid = created.uid;
+  }
+
+  await db.ref(`users/${uid}`).update({
+    uid,
+    email,
+    displayName,
+    role,
+    status: 'ACTIVE',
+    createdAt: now,
+    updatedAt: now
+  });
+
+  return uid;
+}
+
+const adminEmail = process.argv[2] ?? 'admin@aeramarket.test';
+const adminUid = await ensureUser(adminEmail, 'AeraMarket123', 'Aera Admin', 'ADMIN');
+console.log(`admin: ${adminEmail} (${adminUid})`);
+
+const sellerEmail = 'author@aeramarket.test';
+const sellerUid = await ensureUser(sellerEmail, 'AeraMarket123', 'Aera Labs', 'SELLER');
+
+await db.ref(`sellers/${sellerUid}`).set({
+  uid: sellerUid,
+  displayName: 'Aera Labs',
+  bio: 'We build Minecraft tooling, templates and developer utilities. Everything ships with documentation.',
+  country: 'PK',
+  status: 'APPROVED',
+  commissionPercent: 40,
+  payoutMethod: null,
+  rejectionReason: null,
+  createdAt: now,
+  updatedAt: now,
+  approvedAt: now,
+  stats: { products: 0, sales: 0, grossMinor: 0 }
+});
+console.log(`author: ${sellerEmail} (${sellerUid})`);
+
 process.exit(0);

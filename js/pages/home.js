@@ -1,42 +1,32 @@
 import { api } from '../core/api.js';
-import { formatMoney } from '../core/format.js';
+import { mountShell } from '../core/shell.js';
+import { renderGrid, showSkeletons } from '../core/catalog.js';
 
-const list = document.getElementById('product-list');
-const status = document.getElementById('catalogue-status');
+await mountShell('/index.html');
 
-function renderProduct(product) {
-  const item = document.createElement('li');
-  item.className = 'product-card';
+const grid = document.getElementById('featured-grid');
+const chips = document.getElementById('category-chips');
 
-  const title = document.createElement('h2');
-  title.textContent = product.title;
-
-  const price = document.createElement('p');
-  price.textContent = formatMoney(product.priceMinor, product.currency);
-
-  const description = document.createElement('p');
-  description.className = 'muted';
-  description.textContent = product.description.slice(0, 140);
-
-  const link = document.createElement('a');
-  link.href = `/checkout.html?product=${encodeURIComponent(product.id)}`;
-  link.textContent = 'Buy now';
-
-  item.append(title, price, description, link);
-  return item;
-}
+showSkeletons(grid, 6);
 
 try {
-  const products = await api('/api/products?limit=24');
+  const [products, categories] = await Promise.all([
+    api('/api/products?limit=8'),
+    api('/api/categories')
+  ]);
 
-  if (!products || products.length === 0) {
-    status.textContent = 'No products are listed yet.';
-  } else {
-    status.textContent = `${products.length} product${products.length === 1 ? '' : 's'}`;
-    for (const product of products) {
-      list.append(renderProduct(product));
-    }
+  renderGrid(grid, products, 'No products are live yet. The first approved item will appear here.');
+
+  document.getElementById('stat-products').textContent = String(products.length);
+  document.getElementById('stat-categories').textContent = String(categories.length);
+
+  for (const category of categories) {
+    const chip = document.createElement('a');
+    chip.className = 'chip';
+    chip.href = `/explore.html?category=${encodeURIComponent(category.id)}`;
+    chip.textContent = category.name;
+    chips.append(chip);
   }
 } catch (error) {
-  status.textContent = error.message || 'Could not load products.';
+  renderGrid(grid, [], error.message || 'Could not load the catalogue.');
 }

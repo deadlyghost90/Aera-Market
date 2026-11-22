@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="section">
+    <div class="container">
+      <p class="muted small"><a href="/explore.html">← Back to explore</a></p>
+
+      <div class="detail-grid mt-2">
+        <div class="stack">
+          <div class="detail-hero" id="preview"></div>
+          <div class="card">
+            <h2>About this product</h2>
+            <p class="mt-2" id="description" style="white-space: pre-wrap"></p>
+          </div>
+          <div class="card" id="files-card">
+            <h3>What you get</h3>
+            <ul class="check-list mt-2" id="files"></ul>
+          </div>
+        </div>
+
+        <aside class="stack">
+          <div class="card card-elevated">
+            <span class="badge badge-accent" id="kind"></span>
+            <h1 class="mt-2" id="title" style="font-size: 1.5rem"></h1>
+            <p class="muted small mt-1" id="summary"></p>
+            <p class="product-price mt-3" id="price"></p>
+            <button class="btn btn-primary btn-block mt-2" id="buy" type="button">Buy now</button>
+            <p class="muted small mt-2" id="buy-note">Secure checkout via Safepay. Instant access after payment.</p>
+            <div class="divider"></div>
+            <dl class="row small muted">
+              <dt>Author</dt><dd id="author"></dd>
+            </dl>
+            <dl class="row small muted mt-1">
+              <dt>Licence</dt><dd id="licence"></dd>
+            </dl>
+            <dl class="row small muted mt-1">
+              <dt>Tags</dt><dd id="tags"></dd>
+            </dl>
+          </div>
+          <div class="card">
+            <h3>Buyer protection</h3>
+            <ul class="check-list mt-2">
+              <li class="check-item"><span class="check-dot ok"></span><span>Files verified against the author's claim.</span></li>
+              <li class="check-item"><span class="check-dot ok"></span><span>Human reviewed before listing.</span></li>
+              <li class="check-item"><span class="check-dot ok"></span><span>Refund request available from your payment history.</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script type="module" src="/js/pages/product.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Author hub — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="section">
+    <div class="container">
+      <div class="spread">
+        <div>
+          <h1>Author hub</h1>
+          <p class="muted mt-1">Publish products, track review status and see what needs fixing.</p>
+        </div>
+        <button class="btn btn-primary" id="new-product" type="button" hidden>New product</button>
+      </div>
+
+      <section class="card mt-3" id="gate" hidden>
+        <h3>Sign in to continue</h3>
+        <p class="muted small mt-1">You need an account to apply as an author or manage products.</p>
+        <a class="btn btn-primary mt-2" href="/login.html?next=/seller-dashboard.html">Sign in</a>
+      </section>
+
+      <section class="card mt-3" id="apply" hidden>
+        <h3>Apply to become an author</h3>
+        <p class="muted small mt-1">
+          Any account can apply. An administrator reviews your profile before you can publish.
+        </p>
+        <form class="form mt-2" id="apply-form">
+          <label class="field"><span>Author / studio name</span>
+            <input type="text" name="displayName" required minlength="3" maxlength="60" placeholder="e.g. Aera Labs">
+          </label>
+          <label class="field"><span>About you</span>
+            <textarea name="bio" required minlength="40" maxlength="1200"
+              placeholder="What do you build, and what can buyers expect from your work?"></textarea>
+          </label>
+          <label class="field"><span>Country (2 letters)</span>
+            <input type="text" name="country" value="PK" maxlength="2" required>
+          </label>
+          <button class="btn btn-primary" type="submit">Submit application</button>
+        </form>
+      </section>
+
+      <section class="card mt-3" id="status" hidden>
+        <h3 id="status-title"></h3>
+        <p class="muted small mt-1" id="status-text"></p>
+      </section>
+
+      <section id="hub" hidden>
+        <div class="stat-grid mt-3" id="stats"></div>
+
+        <div class="card mt-3">
+          <div class="spread">
+            <h3>Your products</h3>
+            <span class="muted small" id="product-count"></span>
+          </div>
+          <table class="data-table mt-2">
+            <thead>
+              <tr><th>Title</th><th>Status</th><th>Price</th><th>Files</th><th>Updated</th><th></th></tr>
+            </thead>
+            <tbody id="product-rows"></tbody>
+          </table>
+          <p class="empty mt-2" id="no-products" hidden>No products yet. Create your first one.</p>
+        </div>
+      </section>
+
+      <section class="card mt-3" id="wizard" hidden>
+        <div class="spread">
+          <h3>New product</h3>
+          <span class="badge badge-warn" id="wizard-step">Step 1 of 3</span>
+        </div>
+
+        <form class="form mt-2" id="product-form">
+          <label class="field"><span>Title</span>
+            <input type="text" name="title" required minlength="8" maxlength="120">
+          </label>
+          <label class="field"><span>Summary (40–200 characters)</span>
+            <input type="text" name="summary" required minlength="40" maxlength="200">
+          </label>
+          <label class="field"><span>Description</span>
+            <textarea name="description" required minlength="50" maxlength="8000"
+              placeholder="What is included, how to install it, requirements…"></textarea>
+          </label>
+          <div class="row">
+            <label class="field" style="flex:1"><span>Category</span>
+              <select name="categoryId" required id="category-select"></select>
+            </label>
+            <label class="field" style="flex:1"><span>Product type</span>
+              <select name="kind" required id="kind-select"></select>
+            </label>
+          </div>
+          <div class="row">
+            <label class="field" style="flex:1"><span>Price (PKR)</span>
+              <input type="number" name="price" min="1" step="0.01" required>
+            </label>
+            <label class="field" style="flex:1"><span>Licence</span>
+              <select name="license">
+                <option value="STANDARD">Standard</option>
+                <option value="EXTENDED">Extended</option>
+              </select>
+            </label>
+          </div>
+          <label class="field"><span>Tags (comma separated)</span>
+            <input type="text" name="tags" placeholder="minecraft, plugin, paper">
+          </label>
+          <button class="btn btn-primary" type="submit">Save draft</button>
+        </form>
+
+        <div id="upload-step" hidden>
+          <div class="divider"></div>
+          <h3>Step 2 — upload the deliverable and a preview</h3>
+          <p class="muted small mt-1">Files are checked against the product type you selected.</p>
+          <div class="row mt-2">
+            <label class="field" style="flex:1"><span>Deliverable file</span>
+              <input type="file" id="file-input">
+            </label>
+            <label class="field" style="flex:1"><span>Preview image</span>
+              <input type="file" id="preview-input" accept="image/*">
+            </label>
+          </div>
+          <p class="small muted mt-1" id="upload-status"></p>
+          <button class="btn btn-primary mt-2" id="submit-review" type="button" disabled>
+            Submit for review
+          </button>
+        </div>
+
+        <div id="checks" class="mt-3" hidden>
+          <h3>Automated checks</h3>
+          <ul class="check-list mt-2" id="check-list"></ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script type="module" src="/js/pages/seller.js"></script>
+</body>
+</html>

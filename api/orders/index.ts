@@ -1,10 +1,10 @@
-﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { z } from 'zod';
 import { assertSameOrigin, route, sendJson } from '../../lib/server/utils/http';
 import { env } from '../../lib/server/config/env';
 import { requireUser } from '../../lib/server/firebase/guards';
 import { createOrder, listOrdersByBuyer } from '../../lib/server/database/orders.repo';
-import { requireProduct } from '../../lib/server/database/products.repo';
+import { requireApprovedProduct } from '../../lib/server/database/products.repo';
 import { parse, idSchema } from '../../lib/server/security/validate';
 import { newId } from '../../lib/server/utils/ids';
 import { writeAudit } from '../../lib/server/security/audit';
@@ -48,10 +48,7 @@ export default route(async (req: VercelRequest, res: VercelResponse, ctx) => {
     if (seen.has(line.productId)) continue;
     seen.add(line.productId);
 
-    const product = await requireProduct(line.productId);
-    if (product.status !== 'ACTIVE') {
-      throw new AppError('CONFLICT', `"${product.title}" is not available for purchase`);
-    }
+    const product = await requireApprovedProduct(line.productId);
     if (product.priceMinor <= 0) {
       throw new AppError('CONFLICT', `"${product.title}" has no valid price`);
     }

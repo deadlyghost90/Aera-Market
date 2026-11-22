@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review queue — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="section">
+    <div class="container">
+      <div class="spread">
+        <div>
+          <h1>Review queue</h1>
+          <p class="muted mt-1">
+            Check the automated report, then approve, request changes or reject with a reason.
+          </p>
+        </div>
+        <span class="badge badge-warn" id="queue-count">0 waiting</span>
+      </div>
+
+      <p class="alert alert-bad mt-3" id="forbidden" hidden>
+        Administrator access is required for this page.
+      </p>
+
+      <div class="stack mt-3" id="queue"></div>
+      <p class="empty mt-3" id="empty" hidden>Nothing is waiting for review.</p>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script type="module" src="/js/pages/review.js"></script>
+</body>
+</html>

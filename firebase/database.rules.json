@@ -3,7 +3,13 @@
     ".read": false,
     ".write": false,
     "products": {
-      ".indexOn": ["status", "sellerId", "createdAt"]
+      ".indexOn": ["status", "sellerId", "categoryId", "createdAt"]
+    },
+    "sellers": {
+      ".indexOn": ["status", "createdAt"]
+    },
+    "categories": {
+      ".indexOn": ["sort", "active"]
     },
     "orders": {
       ".indexOn": ["buyerId", "createdAt"]

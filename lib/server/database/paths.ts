@@ -6,7 +6,12 @@
 
 export const PATHS = {
   users: 'users',
+  sellers: 'sellers',
+  sellerSlugs: 'sellerSlugs',
+  categories: 'categories',
+  categorySlugs: 'categorySlugs',
   products: 'products',
+  productSlugs: 'productSlugs',
   orders: 'orders',
   ordersByBuyer: 'ordersByBuyer',
   payments: 'payments',
@@ -37,6 +42,9 @@ export function assertSafeId(value: string, label = 'id'): string {
 }
 
 export const userPath = (uid: string) => `${PATHS.users}/${assertSafeId(uid, 'uid')}`;
+export const sellerPath = (uid: string) => `${PATHS.sellers}/${assertSafeId(uid, 'seller id')}`;
+export const categoryPath = (id: string) =>
+  `${PATHS.categories}/${assertSafeId(id, 'category id')}`;
 export const productPath = (id: string) => `${PATHS.products}/${assertSafeId(id, 'product id')}`;
 export const orderPath = (id: string) => `${PATHS.orders}/${assertSafeId(id, 'order id')}`;
 export const paymentPath = (id: string) => `${PATHS.payments}/${assertSafeId(id, 'payment id')}`;
