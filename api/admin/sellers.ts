@@ -42,6 +42,21 @@ export default route(async (req: VercelRequest, res: VercelResponse) => {
     commissionPercent: body.commissionPercent
   });
 
+  // Suspending an author must also remove their products from the catalogue.
+  if (body.status === 'SUSPENDED') {
+    const { listSellerProducts, setProductStatus } = await import(
+      '../../lib/server/database/products.repo'
+    );
+    const products = await listSellerProducts(body.uid, 200);
+    for (const product of products) {
+      if (product.status === 'APPROVED') {
+        await setProductStatus(product.id, 'SUSPENDED', {
+          rejectionNote: 'Author account suspended by an administrator.'
+        });
+      }
+    }
+  }
+
   // Approval unlocks the SELLER role used by the rest of the platform.
   if (body.status === 'APPROVED') {
     await updateUser(body.uid, { role: 'SELLER' });

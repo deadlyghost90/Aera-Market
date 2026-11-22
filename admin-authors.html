@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Authors — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="section">
+    <div class="container">
+      <div class="spread">
+        <div>
+          <h1>Authors</h1>
+          <p class="muted mt-1">Anyone can apply. Approving a profile unlocks publishing for that account.</p>
+        </div>
+        <a class="btn btn-ghost" href="/admin-review.html">Product queue</a>
+      </div>
+
+      <p class="alert alert-bad mt-3" id="forbidden" hidden>
+        Administrator access is required for this page.
+      </p>
+
+      <div class="chips mt-3" id="tabs">
+        <button class="chip" type="button" data-status="PENDING" aria-pressed="true">Pending</button>
+        <button class="chip" type="button" data-status="APPROVED" aria-pressed="false">Approved</button>
+        <button class="chip" type="button" data-status="SUSPENDED" aria-pressed="false">Suspended</button>
+      </div>
+
+      <p class="muted small mt-2" id="count"></p>
+      <div class="stack mt-2" id="list"></div>
+      <p class="empty mt-3" id="empty" hidden>No authors in this state.</p>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script type="module" src="/js/pages/admin-authors.js"></script>
+</body>
+</html>
