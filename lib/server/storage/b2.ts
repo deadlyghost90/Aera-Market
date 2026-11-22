@@ -9,12 +9,18 @@ import { AppError } from '../utils/errors';
  * signature, so B2 itself rejects an oversized or retyped body even if the
  * browser lies. Downloads are short-lived presigned GETs issued only after an
  * entitlement check.
+ *
+ * NOTE: the AWS SDK's own `S3Client` type resolves to an empty interface under
+ * Vercel's per-function TypeScript pass (same class of problem as
+ * `@firebase/database-types`), which removes `.send()`. The client is therefore
+ * structurally typed here and cast once at the SDK boundary.
  */
 
-let cached: {
-  client: import('@aws-sdk/client-s3').S3Client;
-  bucket: string;
-} | null = null;
+interface StorageClient {
+  send(command: unknown): Promise<Record<string, unknown>>;
+}
+
+let cached: { client: StorageClient; bucket: string } | null = null;
 
 export interface B2Config {
   endpoint: string;
@@ -49,26 +55,35 @@ export function b2Config(): B2Config {
   };
 }
 
-async function s3() {
+async function s3(): Promise<{ client: StorageClient; bucket: string }> {
   if (cached) return cached;
 
   const config = b2Config();
   const { S3Client } = await import('@aws-sdk/client-s3');
 
-  cached = {
-    client: new S3Client({
-      endpoint: config.endpoint,
-      region: config.region,
-      forcePathStyle: true,
-      credentials: {
-        accessKeyId: config.keyId,
-        secretAccessKey: config.applicationKey
-      }
-    }),
-    bucket: config.bucket
-  };
+  const client = new S3Client({
+    endpoint: config.endpoint,
+    region: config.region,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: config.keyId,
+      secretAccessKey: config.applicationKey
+    }
+  }) as unknown as StorageClient;
 
+  cached = { client, bucket: config.bucket };
   return cached;
+}
+
+async function presign(command: unknown, expiresInSeconds: number): Promise<string> {
+  const { client } = await s3();
+  const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
+
+  return getSignedUrl(
+    client as unknown as Parameters<typeof getSignedUrl>[0],
+    command as never,
+    { expiresIn: expiresInSeconds }
+  );
 }
 
 export async function presignUpload(input: {
@@ -77,9 +92,8 @@ export async function presignUpload(input: {
   sizeBytes: number;
   expiresInSeconds?: number;
 }): Promise<string> {
-  const { client, bucket } = await s3();
+  const { bucket } = await s3();
   const { PutObjectCommand } = await import('@aws-sdk/client-s3');
-  const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 
   const command = new PutObjectCommand({
     Bucket: bucket,
@@ -90,7 +104,10 @@ export async function presignUpload(input: {
 
   // Sign both headers explicitly: otherwise the presigner omits content-type and
   // a client could upload a different file type than the one that was approved.
-  return getSignedUrl(client, command, {
+  const { client } = await s3();
+  const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
+
+  return getSignedUrl(client as unknown as Parameters<typeof getSignedUrl>[0], command as never, {
     expiresIn: input.expiresInSeconds ?? 600,
     signableHeaders: new Set(['content-type', 'content-length'])
   });
@@ -101,9 +118,8 @@ export async function presignDownload(input: {
   fileName: string;
   expiresInSeconds?: number;
 }): Promise<string> {
-  const { client, bucket } = await s3();
+  const { bucket } = await s3();
   const { GetObjectCommand } = await import('@aws-sdk/client-s3');
-  const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 
   const command = new GetObjectCommand({
     Bucket: bucket,
@@ -111,16 +127,15 @@ export async function presignDownload(input: {
     ResponseContentDisposition: `attachment; filename="${input.fileName.replace(/["\\]/g, '')}"`
   });
 
-  return getSignedUrl(client, command, { expiresIn: input.expiresInSeconds ?? 120 });
+  return presign(command, input.expiresInSeconds ?? 120);
 }
 
 export async function presignPreview(key: string, expiresInSeconds = 600): Promise<string> {
-  const { client, bucket } = await s3();
+  const { bucket } = await s3();
   const { GetObjectCommand } = await import('@aws-sdk/client-s3');
-  const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 
   const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-  return getSignedUrl(client, command, { expiresIn: expiresInSeconds });
+  return presign(command, expiresInSeconds);
 }
 
 export async function headObject(
