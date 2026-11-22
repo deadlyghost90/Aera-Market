@@ -1,6 +1,6 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { route, sendJson } from '../server/utils/http';
-import { db } from '../server/firebase/admin';
+import { credentialStatus, db } from '../server/firebase/admin';
 import { gateway } from '../server/config/env';
 
 const REQUIRED = [
@@ -55,6 +55,16 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
     gatewayError = error instanceof Error ? error.message : 'gateway not configured';
   }
 
+  const credential = await credentialStatus();
+
+  const rawDatabaseUrl = process.env.FIREBASE_DATABASE_URL ?? '';
+  let databaseHost = '';
+  try {
+    databaseHost = new URL(rawDatabaseUrl).host;
+  } catch {
+    databaseHost = '(not a valid url)';
+  }
+
   const database: { ok: boolean; latencyMs: number; error: string | null } = {
     ok: false,
     latencyMs: -1,
@@ -93,6 +103,8 @@ export default route(async (_req: VercelRequest, res: VercelResponse) => {
       storageConfigured: storageMissing.length === 0,
       storageMissing
     },
-    database
+    database,
+    credential,
+    databaseHost
   });
 });

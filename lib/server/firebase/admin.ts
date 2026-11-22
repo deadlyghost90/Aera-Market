@@ -91,3 +91,22 @@ export function db(): DbRoot {
 export function auth() {
   return getAuth(firebaseApp());
 }
+
+/**
+ * Diagnostic used by /api/health: proves the service account can mint an OAuth
+ * token, separately from whether the database answers.
+ */
+export async function credentialStatus(): Promise<{ ok: boolean; error: string | null }> {
+  try {
+    const credential = (firebaseApp().options as { credential?: unknown }).credential as
+      | { getAccessToken?: () => Promise<{ access_token?: string }> }
+      | undefined;
+
+    if (!credential?.getAccessToken) return { ok: false, error: 'no credential on the app' };
+
+    const token = await credential.getAccessToken();
+    return { ok: Boolean(token?.access_token), error: token?.access_token ? null : 'empty token' };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message.slice(0, 300) : 'unknown' };
+  }
+}
