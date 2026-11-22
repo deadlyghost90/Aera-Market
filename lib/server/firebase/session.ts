@@ -24,17 +24,14 @@ export async function signInWithPassword(
     config.FIREBASE_API_KEY
   )}`;
 
-  let response: Response;
-  try {
-    response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, returnSecureToken: true }),
-      signal: AbortSignal.timeout(10_000)
-    });
-  } catch {
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, returnSecureToken: true }),
+    signal: AbortSignal.timeout(10_000)
+  }).catch(() => {
     throw new AppError('GATEWAY_ERROR', 'Authentication service is temporarily unavailable');
-  }
+  });
 
   if (!response.ok) {
     // Deliberately generic: never reveal whether the address exists.

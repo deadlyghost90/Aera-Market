@@ -97,21 +97,18 @@ class SafepayGateway implements PaymentGateway {
       client: config.FASTPAY_PUBLIC_KEY
     };
 
-    let response: Response;
-    try {
-      response = await fetch(`${this.baseUrl()}/order/v1/init`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(15_000)
-      });
-    } catch (error) {
+    const response = await fetch(`${this.baseUrl()}/order/v1/init`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15_000)
+    }).catch((error: unknown) => {
       logger.error('safepay_init_network_error', {
         paymentId: input.paymentId,
         message: error instanceof Error ? error.message : 'unknown'
       });
       throw new AppError('GATEWAY_ERROR', 'Payment provider is temporarily unreachable');
-    }
+    });
 
     const text = await response.text();
     let parsed: unknown = null;
@@ -152,16 +149,13 @@ class SafepayGateway implements PaymentGateway {
   }
 
   async fetchTracker(tracker: string): Promise<GatewayTracker> {
-    let response: Response;
-    try {
-      response = await fetch(`${this.baseUrl()}/order/v1/${encodeURIComponent(tracker)}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(15_000)
-      });
-    } catch {
+    const response = await fetch(`${this.baseUrl()}/order/v1/${encodeURIComponent(tracker)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(15_000)
+    }).catch(() => {
       throw new AppError('GATEWAY_ERROR', 'Payment provider is temporarily unreachable');
-    }
+    });
 
     if (!response.ok) {
       throw new AppError('GATEWAY_ERROR', 'Unable to verify payment with the provider');
