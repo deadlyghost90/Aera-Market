@@ -19,10 +19,16 @@ const SAFE_HEADERS = {
   'X-Content-Type-Options': 'nosniff'
 } as const;
 
-export function sendJson(res: VercelResponse, status: number, payload: unknown): void {
+export function sendJson(
+  res: VercelResponse,
+  status: number,
+  payload: unknown,
+  cacheControl: string = 'no-store'
+): void {
   for (const [key, value] of Object.entries(SAFE_HEADERS)) {
     res.setHeader(key, value);
   }
+  res.setHeader('Cache-Control', cacheControl);
   res.status(status).json(payload);
 }
 

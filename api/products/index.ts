@@ -1,4 +1,4 @@
-﻿import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { z } from 'zod';
 import { assertSameOrigin, route, sendJson } from '../../lib/server/utils/http';
 import { env } from '../../lib/server/config/env';
@@ -30,7 +30,7 @@ export default route(async (req: VercelRequest, res: VercelResponse, ctx) => {
     }
 
     const products = await listActiveProducts(limit);
-    sendJson(res, 200, { data: products });
+    sendJson(res, 200, { data: products }, 'public, s-maxage=60, stale-while-revalidate=300');
     return;
   }
 
