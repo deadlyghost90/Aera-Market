@@ -18,8 +18,13 @@
             Check the automated report, then approve, request changes or reject with a reason.
           </p>
         </div>
-        <span class="badge badge-warn" id="queue-count">0 waiting</span>
+      <div class="chips mt-3" id="status-tabs">
+        <button class="chip" type="button" data-status="PENDING_REVIEW" aria-pressed="true">Pending</button>
+        <button class="chip" type="button" data-status="APPROVED" aria-pressed="false">Approved</button>
+        <button class="chip" type="button" data-status="SUSPENDED" aria-pressed="false">Suspended</button>
       </div>
+
+      <p class="muted small mt-2" id="queue-count">0 waiting</p>
 
       <p class="alert alert-bad mt-3" id="forbidden" hidden>
         Administrator access is required for this page.

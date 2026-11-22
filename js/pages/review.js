@@ -5,19 +5,31 @@ const session = await mountShell('/admin-review.html');
 const queue = document.getElementById('queue');
 const empty = document.getElementById('empty');
 const count = document.getElementById('queue-count');
+const tabs = document.getElementById('status-tabs');
+
+let status = 'PENDING_REVIEW';
 
 if (!session) {
   window.location.assign('/login.html?next=/admin-review.html');
 } else if (session.role !== 'ADMIN') {
   document.getElementById('forbidden').hidden = false;
 } else {
+  tabs.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-status]');
+    if (!button) return;
+    status = button.dataset.status;
+    for (const chip of tabs.querySelectorAll('[data-status]')) {
+      chip.setAttribute('aria-pressed', String(chip === button));
+    }
+    void load();
+  });
   await load();
 }
 
 async function load() {
-  const products = await api('/api/admin/products?queue=1').catch(() => []);
+  const products = await api(`/api/admin/products?status=${encodeURIComponent(status)}`).catch(() => []);
   queue.replaceChildren();
-  count.textContent = `${products.length} waiting`;
+  count.textContent = `${products.length} ${status === 'PENDING_REVIEW' ? 'waiting' : 'product(s)'}`;
   empty.hidden = products.length > 0;
 
   for (const product of products) {
@@ -41,8 +53,9 @@ function renderCard(product) {
   left.append(title, meta);
 
   const badge = document.createElement('span');
-  badge.className = 'badge badge-warn';
-  badge.textContent = 'Pending review';
+  badge.className =
+    status === 'APPROVED' ? 'badge badge-ok' : status === 'SUSPENDED' ? 'badge badge-bad' : 'badge badge-warn';
+  badge.textContent = label(status);
   head.append(left, badge);
 
   const summary = document.createElement('p');
@@ -114,27 +127,28 @@ function renderCard(product) {
   const actions = document.createElement('div');
   actions.className = 'row mt-2';
 
-  const approve = document.createElement('button');
-  approve.type = 'button';
-  approve.className = 'btn btn-primary btn-sm';
-  approve.textContent = 'Approve';
-  approve.addEventListener('click', () => decide(product.id, 'APPROVE', note.value, reason.value, card));
+  const makeButton = (text, decision, className) => {
+    const element = document.createElement('button');
+    element.type = 'button';
+    element.className = className;
+    element.textContent = text;
+    element.addEventListener('click', () =>
+      decide(product.id, decision, note.value, reason.value, card)
+    );
+    return element;
+  };
 
-  const changes = document.createElement('button');
-  changes.type = 'button';
-  changes.className = 'btn btn-sm';
-  changes.textContent = 'Request changes';
-  changes.addEventListener('click', () =>
-    decide(product.id, 'REQUEST_CHANGES', note.value, reason.value, card)
-  );
-
-  const reject = document.createElement('button');
-  reject.type = 'button';
-  reject.className = 'btn btn-danger btn-sm';
-  reject.textContent = 'Reject';
-  reject.addEventListener('click', () => decide(product.id, 'REJECT', note.value, reason.value, card));
-
-  actions.append(approve, changes, reject);
+  if (status === 'PENDING_REVIEW') {
+    actions.append(
+      makeButton('Approve', 'APPROVE', 'btn btn-primary btn-sm'),
+      makeButton('Request changes', 'REQUEST_CHANGES', 'btn btn-sm'),
+      makeButton('Reject', 'REJECT', 'btn btn-danger btn-sm')
+    );
+  } else if (status === 'APPROVED') {
+    actions.append(makeButton('Suspend', 'SUSPEND', 'btn btn-danger btn-sm'));
+  } else {
+    actions.append(makeButton('Restore listing', 'APPROVE', 'btn btn-primary btn-sm'));
+  }
 
   card.append(checks, files, note, reason, actions);
   return card;
