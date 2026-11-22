@@ -105,6 +105,7 @@ export async function mountShell(active = '') {
       if (session.role === 'ADMIN') {
         nav.append(navLink('/admin-review.html', 'Review queue', active));
         nav.append(navLink('/admin-authors.html', 'Authors', active));
+        nav.append(navLink('/admin-categories.html', 'Categories', active));
       }
       nav.append(navLink('/buyer-library.html', 'Library', active));
       nav.append(navLink('/buyer-payments.html', 'Purchases', active));

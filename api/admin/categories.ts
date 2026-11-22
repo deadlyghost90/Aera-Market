@@ -62,14 +62,34 @@ export default route(async (req: VercelRequest, res: VercelResponse) => {
   if (req.method === 'PATCH') {
     const body = parse(baseSchema.partial().extend({ id: idSchema }), req.body);
     await requireCategory(body.id);
-    const { id, ...patch } = body;
-    const category = await updateCategory(id, patch);
+
+    // Only send the fields the caller actually provided: zod defaults would
+    // otherwise reset `sort`/`active` on every partial update.
+    const raw = (req.body ?? {}) as Record<string, unknown>;
+    const allowed = [
+      'name',
+      'slug',
+      'description',
+      'allowedKinds',
+      'allowedExtensions',
+      'maxFileMb',
+      'minPriceMinor',
+      'sort',
+      'active'
+    ] as const;
+
+    const patch: Record<string, unknown> = {};
+    for (const key of allowed) {
+      if (raw[key] !== undefined) patch[key] = body[key];
+    }
+
+    const category = await updateCategory(body.id, patch);
     await writeAudit({
       actorUid: auth.uid,
       action: 'category.updated',
       targetType: 'category',
-      targetId: id,
-      meta: { active: category.active }
+      targetId: body.id,
+      meta: { active: category.active, fields: Object.keys(patch).join(',') }
     });
     sendJson(res, 200, { data: category });
     return;
