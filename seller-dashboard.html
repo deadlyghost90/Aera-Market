@@ -53,6 +53,21 @@
       <section id="hub" hidden>
         <div class="stat-grid mt-3" id="stats"></div>
 
+        <div class="card mt-3" id="earnings-card">
+          <div class="spread">
+            <h3>Earnings</h3>
+            <span class="badge badge-accent" id="commission-badge"></span>
+          </div>
+          <div class="stat-grid mt-2" id="earnings-stats"></div>
+          <table class="data-table mt-2">
+            <thead>
+              <tr><th>Date</th><th>Type</th><th>Amount</th><th>Order</th></tr>
+            </thead>
+            <tbody id="earnings-rows"></tbody>
+          </table>
+          <p class="empty mt-2" id="earnings-empty" hidden>No sales yet — approved products will appear here once they sell.</p>
+        </div>
+
         <div class="card mt-3">
           <div class="spread">
             <h3>Your products</h3>

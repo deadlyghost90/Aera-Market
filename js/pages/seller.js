@@ -138,6 +138,58 @@ async function loadHub() {
   }
 
   state.categories = await api('/api/categories').catch(() => []);
+  await renderEarnings();
+}
+
+async function renderEarnings() {
+  const earnings = await api('/api/sellers/me/earnings').catch(() => null);
+  if (!earnings) return;
+
+  el('commission-badge').textContent = `${earnings.commissionPercent}% commission`;
+
+  const stats = el('earnings-stats');
+  stats.replaceChildren();
+  const items = [
+    ['Available', money(earnings.balance.availableMinor)],
+    ['Lifetime net', money(earnings.balance.lifetimeMinor)],
+    ['Gross sales', money(earnings.totals.salesMinor)],
+    ['Commission paid', money(earnings.totals.commissionMinor)]
+  ];
+  for (const [name, value] of items) {
+    const box = document.createElement('dl');
+    box.className = 'stat';
+    const dt = document.createElement('dt');
+    dt.textContent = name;
+    const dd = document.createElement('dd');
+    dd.textContent = String(value);
+    box.append(dt, dd);
+    stats.append(box);
+  }
+
+  const rows = el('earnings-rows');
+  rows.replaceChildren();
+  el('earnings-empty').hidden = earnings.entries.length > 0;
+
+  for (const entry of earnings.entries) {
+    const row = document.createElement('tr');
+
+    const date = document.createElement('td');
+    date.textContent = timeAgo(entry.createdAt);
+
+    const type = document.createElement('td');
+    type.textContent = label(entry.type);
+
+    const amount = document.createElement('td');
+    amount.textContent = money(entry.amountMinor, entry.currency);
+    amount.className = entry.amountMinor < 0 ? 'text-warn' : 'text-ok';
+
+    const order = document.createElement('td');
+    order.className = 'mono small';
+    order.textContent = entry.orderId;
+
+    row.append(date, type, amount, order);
+    rows.append(row);
+  }
 }
 
 async function openWizard(existing) {

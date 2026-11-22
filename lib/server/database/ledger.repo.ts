@@ -25,6 +25,20 @@ export async function listLedgerByPayment(paymentId: string): Promise<LedgerEntr
   return Object.values(value).sort((a, b) => a.createdAt - b.createdAt);
 }
 
+/** Newest first, for the author's earnings view. Requires .indexOn: sellerId. */
+export async function listLedgerBySeller(sellerId: string, limit = 100): Promise<LedgerEntry[]> {
+  const snapshot = await db()
+    .ref(PATHS.ledger)
+    .orderByChild('sellerId')
+    .equalTo(sellerId)
+    .limitToLast(limit)
+    .get();
+
+  const value = snapshot.val() as Record<string, LedgerEntry> | null;
+  if (!value) return [];
+  return Object.values(value).sort((a, b) => b.createdAt - a.createdAt);
+}
+
 /**
  * Seller balance is a materialised view of the ledger. Each payment is applied
  * at most once thanks to the `applied` guard written inside the same

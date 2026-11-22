@@ -21,7 +21,7 @@
       ".indexOn": ["paymentId", "createdAt"]
     },
     "ledger": {
-      ".indexOn": ["paymentId"]
+      ".indexOn": ["paymentId", "sellerId"]
     },
     "sellerBalances": {
       ".indexOn": ["updatedAt"]

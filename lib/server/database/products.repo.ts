@@ -205,7 +205,10 @@ export async function listApprovedProducts(
     .filter((product) => (options.kind ? product.kind === options.kind : true))
     .filter((product) =>
       search
-        ? [product.title, product.summary, ...product.tags].join(' ').toLowerCase().includes(search)
+        ? [product.title, product.summary, product.sellerName, ...product.tags]
+            .join(' ')
+            .toLowerCase()
+            .includes(search)
         : true
     )
     .sort((a, b) => (b.approvedAt ?? 0) - (a.approvedAt ?? 0))
