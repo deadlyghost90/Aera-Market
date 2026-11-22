@@ -8,7 +8,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsc -p tsconfig.tests.json && node --test .tests-build/tests/state.test.js .tests-build/tests/commission.test.js .tests-build/tests/signature.test.js .tests-build/tests/refund.test.js .tests-build/tests/review.test.js .tests-build/tests/b2-presign.test.js",
+    "test": "tsc -p tsconfig.tests.json && node --test .tests-build/tests/state.test.js .tests-build/tests/commission.test.js .tests-build/tests/signature.test.js .tests-build/tests/refund.test.js .tests-build/tests/review.test.js .tests-build/tests/b2-presign.test.js .tests-build/tests/flow.test.js",
     "seed": "node scripts/seed.mjs",
     "check:pages": "node scripts/check-pages.mjs",
     "make-admin": "node scripts/make-admin.mjs"
