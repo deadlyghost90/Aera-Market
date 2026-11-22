@@ -232,6 +232,20 @@ export interface SellerBalance {
   updatedAt: number;
 }
 
+/** Proof that a buyer owns a product, created when a payment settles. */
+export interface Purchase {
+  id: string;
+  userId: string;
+  productId: string;
+  orderId: string;
+  productName: string;
+  sellerId: string;
+  priceMinor: number;
+  currency: string;
+  grantedAt: number;
+  downloadCount: number;
+}
+
 export interface AuditLog {
   id: string;
   actorUid: string;

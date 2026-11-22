@@ -106,6 +106,7 @@ export async function mountShell(active = '') {
         nav.append(navLink('/admin-review.html', 'Review queue', active));
         nav.append(navLink('/admin-authors.html', 'Authors', active));
       }
+      nav.append(navLink('/buyer-library.html', 'Library', active));
       nav.append(navLink('/buyer-payments.html', 'Purchases', active));
 
       const signOut = document.createElement('button');

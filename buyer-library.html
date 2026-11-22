@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Library — Aera Market</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main class="section">
+    <div class="container">
+      <div class="spread">
+        <div>
+          <h1>Your library</h1>
+          <p class="muted mt-1">Everything you own. Downloads are signed and expire in two minutes.</p>
+        </div>
+        <a class="btn btn-ghost" href="/explore.html">Explore more</a>
+      </div>
+
+      <p class="muted small mt-3" id="status">Loading…</p>
+      <ul class="product-grid mt-3" id="library"></ul>
+      <div class="empty mt-3" id="empty" hidden>
+        You have not purchased anything yet.
+        <div class="mt-2"><a class="btn btn-primary" href="/explore.html">Browse products</a></div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script type="module" src="/js/pages/library.js"></script>
+</body>
+</html>

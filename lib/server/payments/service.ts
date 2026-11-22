@@ -22,6 +22,7 @@ import {
 } from '../database/payments.repo';
 import { attachPayment } from '../database/orders.repo';
 import { applySellerDelta } from '../database/ledger.repo';
+import { grantPurchases } from '../database/purchases.repo';
 import { writePaymentEventOnly, writeSettlement } from '../database/settlement.repo';
 import type { LedgerEntry } from '../../shared/types';
 
@@ -315,6 +316,15 @@ export async function settlePayment(input: {
       currency: payment.currency
     });
   }
+
+  // Ownership is what the buyer actually paid for: without this row the library
+  // and downloads would have nothing to authorise against.
+  await grantPurchases({
+    userId: order.buyerId,
+    orderId: order.id,
+    items: order.items,
+    currency: payment.currency
+  });
 
   await writeAudit({
     actorUid: input.actor ?? 'system',

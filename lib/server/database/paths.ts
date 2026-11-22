@@ -22,6 +22,7 @@ export const PATHS = {
   refunds: 'refunds',
   refundsByUser: 'refundsByUser',
   ledger: 'ledger',
+  purchases: 'purchases',
   sellerBalances: 'sellerBalances',
   auditLogs: 'auditLogs',
   idempotency: 'idempotency',

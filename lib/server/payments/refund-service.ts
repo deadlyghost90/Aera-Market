@@ -247,6 +247,12 @@ export async function decideRefund(input: {
     }
   });
 
+  // A fully refunded product is no longer owned, so download access is removed.
+  if (newRefundedMinor >= payment.amountMinor) {
+    const { revokePurchase } = await import('../database/purchases.repo');
+    await revokePurchase(payment.userId, payment.productId).catch(() => undefined);
+  }
+
   logger.info('refund_completed', {
     refundId: refund.id,
     paymentId: payment.id,
