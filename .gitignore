@@ -12,3 +12,10 @@ coverage/
 .tests-build/
 serviceAccount*.json
 *firebase-adminsdk*.json
+
+# local credentials / one-off scripts
+.key.base64.txt
+key.base64.txt
+.bootstrap.mjs
+.key.json
+*.base64.txt
