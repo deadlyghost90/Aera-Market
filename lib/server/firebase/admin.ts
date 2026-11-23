@@ -76,34 +76,40 @@ function parseServiceAccount(raw: string): {
   client_email: string;
   private_key: string;
 } {
-  const trimmed = raw.trim().replace(/^"|"$/g, '');
+  // Normalise the shapes people actually paste: surrounding quotes, a data URI
+  // prefix, escaped JSON inside a string, or the raw object.
+  let candidate = raw.trim();
+  candidate = candidate.replace(/^data:[^,]*,/, '');
+  candidate = candidate.replace(/^["']|["']$/g, '').trim();
 
-  // Accept the raw JSON as well as base64: pasting the key file contents
-  // directly is the most common mistake, and failing here produces a confusing
-  // "Unexpected token" error at request time.
-  const candidates: string[] = [];
-  if (trimmed.startsWith('{')) candidates.push(trimmed);
+  const attempts: string[] = [];
+  if (candidate.startsWith('{')) attempts.push(candidate);
   else {
-    candidates.push(Buffer.from(trimmed.replace(/\s+/g, ''), 'base64').toString('utf8'));
-    candidates.push(trimmed);
+    attempts.push(Buffer.from(candidate.replace(/\s+/g, ''), 'base64').toString('utf8'));
+    attempts.push(candidate);
   }
 
-  for (const candidate of candidates) {
+  for (const attempt of attempts) {
     try {
-      const parsed = JSON.parse(candidate) as {
+      let parsed: unknown = JSON.parse(attempt);
+      // A JSON string that itself contains the JSON object.
+      if (typeof parsed === 'string') parsed = JSON.parse(parsed);
+
+      const record = parsed as {
         project_id?: string;
         client_email?: string;
         private_key?: string;
       };
-      if (parsed.project_id && parsed.client_email && parsed.private_key) {
+
+      if (record?.project_id && record?.client_email && record?.private_key) {
         return {
-          project_id: parsed.project_id,
-          client_email: parsed.client_email,
-          private_key: parsed.private_key.replace(/\\n/g, '\n')
+          project_id: record.project_id,
+          client_email: record.client_email,
+          private_key: record.private_key.replace(/\\n/g, '\n')
         };
       }
     } catch {
-      // try the next candidate
+      // try the next shape
     }
   }
 
