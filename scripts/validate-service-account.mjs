@@ -17,11 +17,14 @@ if (!file) {
 
 let parsed;
 try {
-  parsed = JSON.parse(readFileSync(file, 'utf8'));
+  const raw = readFileSync(file, 'utf8').replace(/^\uFEFF/, '');
+  parsed = JSON.parse(raw);
 } catch (error) {
   console.error(`Could not read JSON from ${file}: ${error.message}`);
   process.exit(1);
 }
+
+const raw = readFileSync(file, 'utf8').replace(/^\uFEFF/, '');
 
 const missing = ['project_id', 'client_email', 'private_key'].filter((key) => !parsed[key]);
 if (missing.length > 0) {
