@@ -9,11 +9,14 @@ const chips = document.getElementById('filter-chips');
 const count = document.getElementById('result-count');
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
+const sortSelect = document.getElementById('sort-select');
 
 const params = new URLSearchParams(window.location.search);
 let categoryId = params.get('category') ?? '';
 let search = params.get('q') ?? '';
+let sort = params.get('sort') ?? 'newest';
 searchInput.value = search;
+sortSelect.value = sort;
 
 const categories = await api('/api/categories').catch(() => []);
 
@@ -45,6 +48,15 @@ function renderChips() {
   }
 }
 
+function applySort(products) {
+  const list = [...products];
+  if (sort === 'price-asc') list.sort((a, b) => a.priceMinor - b.priceMinor);
+  else if (sort === 'price-desc') list.sort((a, b) => b.priceMinor - a.priceMinor);
+  else if (sort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
+  else list.sort((a, b) => (b.approvedAt ?? 0) - (a.approvedAt ?? 0));
+  return list;
+}
+
 async function load() {
   renderChips();
   showSkeletons(grid, 6);
@@ -54,12 +66,16 @@ async function load() {
   if (search) query.set('q', search);
   query.set('limit', '48');
 
-  history.replaceState(null, '', `${window.location.pathname}?${query.toString()}`);
+  const url = new URL(window.location.href);
+  url.search = query.toString();
+  if (sort !== 'newest') url.searchParams.set('sort', sort);
+  history.replaceState(null, '', url.toString());
 
   try {
     const products = await api(`/api/products?${query.toString()}`);
-    renderGrid(grid, products, 'Nothing matches those filters yet.');
-    count.textContent = `${products.length} product(s)`;
+    const ordered = applySort(products || []);
+    renderGrid(grid, ordered, 'Nothing matches those filters yet.');
+    count.textContent = `${ordered.length} product(s)`;
   } catch (error) {
     renderGrid(grid, [], error.message || 'Could not load products.');
     count.textContent = '';
@@ -69,6 +85,11 @@ async function load() {
 searchForm.addEventListener('submit', (event) => {
   event.preventDefault();
   search = searchInput.value.trim();
+  void load();
+});
+
+sortSelect.addEventListener('change', () => {
+  sort = sortSelect.value;
   void load();
 });
 

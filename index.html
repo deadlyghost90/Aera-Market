@@ -4,79 +4,189 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Aera Market — digital products from vetted authors</title>
-  <meta name="description" content="Source code, templates, plugins, Minecraft resources and game assets. Every product reviewed before it goes live.">
+  <meta name="description" content="Source code, templates, plugins, Minecraft resources and game assets. Every product is checked against what the author claims before it is listed.">
   <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/marketing.css">
 </head>
 <body>
   <header id="site-header"></header>
 
   <main>
-    <section class="hero">
+    <!-- hero -->
+    <section class="section" style="padding-bottom: 0">
       <div class="container">
-        <span class="hero-eyebrow">Reviewed before it goes live</span>
-        <h1>Digital products from authors who <span class="grad">actually ship</span>.</h1>
-        <p class="lead">
-          Source code, templates, plugins, Minecraft resources and game assets.
-          Every submission is checked against what the author claims before buyers see it.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="/explore.html">Browse the market</a>
-          <a class="btn btn-ghost" href="/seller-dashboard.html">Become an author</a>
-        </div>
+        <div class="hero-split">
+          <div>
+            <span class="hero-eyebrow">Reviewed before it goes live</span>
+            <h1 style="margin-top: 20px">Digital products that <span class="grad">actually ship</span>.</h1>
+            <p class="lead mt-2">
+              A marketplace for source code, templates, plugins, Minecraft resources and game
+              assets. Authors upload real files; our checks compare them with what is claimed.
+            </p>
 
-        <div class="hero-stats">
-          <div class="hero-stat"><strong id="stat-products">—</strong><span>Featured products</span></div>
-          <div class="hero-stat"><strong id="stat-categories">—</strong><span>Categories</span></div>
-          <div class="hero-stat"><strong>40%</strong><span>Platform commission</span></div>
+            <form class="hero-search" id="hero-search" role="search">
+              <input type="search" id="hero-search-input" placeholder="Search products, tags, authors" aria-label="Search products">
+              <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+
+            <div class="hero-meta">
+              <span>Every listing human reviewed</span>
+              <span>Private files, signed downloads</span>
+              <span>40% platform commission</span>
+            </div>
+          </div>
+
+          <div class="hero-stack" id="hero-stack" aria-hidden="true">
+            <div class="stack-card">
+              <div class="thumb"></div>
+              <div class="body"><strong>Loading catalogue…</strong><span>—</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- category marquee -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" id="category-marquee"></div>
+    </div>
+
+    <!-- stats -->
+    <section class="section" style="padding-bottom: 0">
+      <div class="container">
+        <div class="hero-stats">
+          <div class="hero-stat"><strong id="stat-categories">—</strong><span>Categories open for authors</span></div>
+          <div class="hero-stat"><strong>14</strong><span>Automated checks per submission</span></div>
+          <div class="hero-stat"><strong>100%</strong><span>Products reviewed by a human</span></div>
+          <div class="hero-stat"><strong>40%</strong><span>Platform commission, stated up front</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- categories -->
     <section class="section" id="categories">
       <div class="container">
-        <div class="spread">
-          <h2>Browse by category</h2>
-          <a class="nav-link" href="/explore.html">All products →</a>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Browse</span>
+            <h2>Find the right category</h2>
+            <p>Each category defines which product types and file types are accepted, so the catalogue stays consistent.</p>
+          </div>
+          <a href="/explore.html">All products →</a>
         </div>
-        <div class="chips mt-3" id="category-chips"></div>
+        <div class="chips" id="category-chips"></div>
       </div>
     </section>
 
-    <section class="section">
+    <!-- featured -->
+    <section class="section" style="padding-top: 0">
       <div class="container">
-        <div class="spread">
-          <h2>Fresh from the review queue</h2>
-          <span class="muted small">Approved in the last few days</span>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Fresh</span>
+            <h2>Recently approved</h2>
+            <p>Only products that passed the automated checks and a human review appear here.</p>
+          </div>
+          <a href="/explore.html">See everything →</a>
         </div>
-        <ul class="product-grid mt-3" id="featured-grid"></ul>
+        <ul class="product-grid" id="featured-grid"></ul>
       </div>
     </section>
 
-    <section class="section" id="how">
+    <!-- why -->
+    <section class="section" style="padding-top: 0">
       <div class="container">
-        <h2>How selling works</h2>
-        <p class="muted mt-1">Strict on purpose — buyers trust the catalogue because nothing skips review.</p>
-        <div class="stat-grid mt-3">
-          <div class="card">
-            <span class="badge badge-accent">Step 1</span>
-            <h3 class="mt-2">Apply as an author</h3>
-            <p class="muted small mt-1">Any account can apply. An admin reviews your profile before you can publish.</p>
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Why Aera</span>
+            <h2>Built for buyers who read the fine print</h2>
           </div>
-          <div class="card">
-            <span class="badge badge-accent">Step 2</span>
-            <h3 class="mt-2">Upload the real files</h3>
-            <p class="muted small mt-1">Attach the deliverable and a preview. Files are checked against the product type you claim.</p>
+        </div>
+
+        <div class="bento">
+          <article class="bento-tile span-6">
+            <span class="kicker">Verification</span>
+            <h3>Claims checked against files</h3>
+            <p>
+              A product listed as a Minecraft plugin must ship files that can plausibly be one.
+              Mismatches are rejected before a reviewer ever sees them.
+            </p>
+            <span class="figure">14 checks</span>
+          </article>
+
+          <article class="bento-tile span-3">
+            <span class="kicker">Review</span>
+            <h3>Human decision</h3>
+            <p>Approve, request changes or reject with a reason the author can act on.</p>
+            <span class="figure">1:1</span>
+          </article>
+
+          <article class="bento-tile span-3">
+            <span class="kicker">Delivery</span>
+            <h3>Private bucket</h3>
+            <p>Files never leave storage without a proven purchase and a signed, expiring link.</p>
+            <span class="figure">120s</span>
+          </article>
+
+          <article class="bento-tile span-8">
+            <span class="kicker">Money</span>
+            <h3>One ledger, visible to both sides</h3>
+            <p>
+              Every sale writes a sale row and a commission row. Authors see the same numbers the
+              platform does, and a full refund removes ownership with the money.
+            </p>
+            <span class="figure">40 / 60</span>
+          </article>
+
+          <article class="bento-tile span-4">
+            <span class="kicker">Accounts</span>
+            <h3>Anyone can become an author</h3>
+            <p>Apply, get approved, publish. Buyers keep buying with the same account.</p>
+            <a class="btn mt-2" href="/become-a-seller.html" style="align-self: flex-start">Start selling</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- how it works -->
+    <section class="section" style="padding-top: 0" id="how">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">For authors</span>
+            <h2>From upload to listing in three steps</h2>
           </div>
-          <div class="card">
-            <span class="badge badge-accent">Step 3</span>
-            <h3 class="mt-2">Automatic checks</h3>
-            <p class="muted small mt-1">Missing files, wrong file types or a mismatch with your claim block submission immediately.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <span class="num">01</span>
+            <h3>Draft the product</h3>
+            <p>Title, summary, category, licence and price. The category decides the accepted file types and the minimum price.</p>
           </div>
-          <div class="card">
-            <span class="badge badge-accent">Step 4</span>
-            <h3 class="mt-2">Human review</h3>
-            <p class="muted small mt-1">A reviewer approves, rejects or requests changes. Only approved products are listed.</p>
+          <div class="step">
+            <span class="num">02</span>
+            <h3>Upload the real files</h3>
+            <p>Deliverable and preview go straight to private storage. Size and content type are signed into the upload, then verified.</p>
           </div>
+          <div class="step">
+            <span class="num">03</span>
+            <h3>Pass the review</h3>
+            <p>Automated checks run first. A reviewer then approves, requests changes, or rejects with a specific reason.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- cta -->
+    <section class="section" style="padding-top: 0">
+      <div class="container">
+        <div class="cta-band">
+          <div>
+            <h2>Sell what you build.</h2>
+            <p>Authors keep the majority of every sale. Apply once, publish as often as you like.</p>
+          </div>
+          <a class="btn" href="/become-a-seller.html">Become an author</a>
         </div>
       </div>
     </section>

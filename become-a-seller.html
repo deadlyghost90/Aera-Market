@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Become an author — Aera Market</title>
+  <meta name="description" content="Apply to sell source code, templates, plugins and game assets on Aera Market. Applications are reviewed before publishing.">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/marketing.css">
+</head>
+<body>
+  <header id="site-header"></header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="hero-split">
+          <div>
+            <span class="hero-eyebrow">Authors</span>
+            <h1 style="margin-top: 20px">Sell the things you <span class="grad">actually build</span>.</h1>
+            <p class="lead mt-2">
+              One account buys and sells. Apply once, publish as often as you like. You keep the
+              majority of every sale and see the exact commission on each transaction.
+            </p>
+            <ul class="requirements mt-3">
+              <li>You deliver the real files — not a link to someone else's work.</li>
+              <li>Everything is reviewed by a human before it is listed.</li>
+              <li>Commission is 40% by default and shown on every sale.</li>
+            </ul>
+          </div>
+
+          <div class="card" id="apply-card">
+            <h3>Apply as an author</h3>
+            <p class="muted small mt-1" id="apply-hint">
+              Tell buyers who you are. An administrator reviews applications before publishing.
+            </p>
+
+            <p class="alert alert-bad mt-2" id="auth-note" hidden>
+              Sign in first, then this form becomes available.
+              <a href="/login.html?next=/become-a-seller.html" style="color: var(--primary)">Sign in →</a>
+            </p>
+
+            <p class="alert alert-ok mt-2" id="pending-note" hidden>
+              Your application is waiting for review. You can prepare products afterwards.
+            </p>
+
+            <p class="alert mt-2" id="approved-note" hidden>
+              You are already an approved author.
+              <a href="/seller-dashboard.html" style="color: var(--primary)">Open the author hub →</a>
+            </p>
+
+            <form class="form mt-2" id="apply-form" hidden>
+              <label class="field"><span>Author / studio name</span>
+                <input type="text" name="displayName" required minlength="3" maxlength="60" placeholder="e.g. Aera Labs">
+              </label>
+              <label class="field"><span>About you</span>
+                <textarea name="bio" required minlength="40" maxlength="1200"
+                  placeholder="What do you build? What can buyers expect from your releases?"></textarea>
+              </label>
+              <label class="field"><span>Country (2 letters)</span>
+                <input type="text" name="country" value="PK" maxlength="2" required>
+              </label>
+              <button class="btn btn-primary" type="submit">Submit application</button>
+              <p class="muted small" id="form-message" role="status"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">What happens next</span>
+            <h2>Four steps, no surprises</h2>
+          </div>
+        </div>
+        <div class="steps">
+          <div class="step"><span class="num">01</span><h3>Apply</h3><p>Name, a short bio and your country. That is the whole application.</p></div>
+          <div class="step"><span class="num">02</span><h3>Get approved</h3><p>An administrator reviews the profile and unlocks publishing for your account.</p></div>
+          <div class="step"><span class="num">03</span><h3>Upload and submit</h3><p>Attach the deliverable and a preview, then submit for review.</p></div>
+          <div class="step"><span class="num">04</span><h3>Get paid</h3><p>Each sale credits your balance; the ledger shows the commission per order.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Questions</span>
+            <h2>Before you apply</h2>
+          </div>
+        </div>
+
+        <div class="faq">
+          <details>
+            <summary>What can I sell?</summary>
+            <p>Source code, website templates, scripts, plugins, APIs, software, Minecraft resources, game assets, UI kits and graphics — as long as the files match the category you choose.</p>
+          </details>
+          <details>
+            <summary>Why was my product rejected?</summary>
+            <p>Every rejection carries a reason such as files not matching the description, quality below standard, an incomplete package, or a licence issue. You can fix the product and resubmit.</p>
+          </details>
+          <details>
+            <summary>How is the commission calculated?</summary>
+            <p>40% of the sale by default, stored on the transaction at the moment it is paid. Your share is written to the ledger in the same operation, so the balance always matches the sales.</p>
+          </details>
+          <details>
+            <summary>Do buyers get the files immediately?</summary>
+            <p>Yes. A paid order creates ownership, and the library issues a signed download link that expires after two minutes.</p>
+          </details>
+          <details>
+            <summary>Can I sell the same product elsewhere?</summary>
+            <p>You choose the licence you offer here. Aera Market only requires that the product is yours to sell and that the files match what the listing claims.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0">
+      <div class="container">
+        <div class="cta-band">
+          <div>
+            <h2>Ready when you are.</h2>
+            <p>Create an account, apply once, and publish from the author hub.</p>
+          </div>
+          <a class="btn" href="/register.html">Create an account</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script type="module" src="/js/pages/become-seller.js"></script>
+</body>
+</html>

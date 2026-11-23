@@ -5,27 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Explore — Aera Market</title>
   <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/marketing.css">
 </head>
 <body>
   <header id="site-header"></header>
 
-  <main class="section">
-    <div class="container">
-      <div class="spread">
-        <div>
-          <h1>Explore</h1>
-          <p class="muted mt-1">Every item here has passed automated checks and human review.</p>
-        </div>
-        <form class="row" id="search-form">
+  <main>
+    <section class="search-hero">
+      <div class="container">
+        <span class="hero-eyebrow">Marketplace</span>
+        <h1 style="margin-top: 16px">Explore the catalogue</h1>
+        <p class="lead mt-2" style="max-width: 60ch">
+          Every item here passed automated checks and a human review. Search by product, tag or author.
+        </p>
+        <form class="hero-search" id="search-form" role="search">
           <input type="search" id="search-input" placeholder="Search products, tags, authors" aria-label="Search products">
-          <button class="btn" type="submit">Search</button>
+          <button class="btn btn-primary" type="submit">Search</button>
         </form>
       </div>
+    </section>
 
-      <div class="chips mt-3" id="filter-chips"></div>
-      <p class="muted small mt-2" id="result-count"></p>
-      <ul class="product-grid mt-3" id="results"></ul>
+    <div class="filter-bar">
+      <div class="container">
+        <div class="chips" id="filter-chips"></div>
+        <label class="field" style="gap: 0">
+          <span class="muted small">Sort</span>
+          <select id="sort-select">
+            <option value="newest">Newest first</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="title">Title A–Z</option>
+          </select>
+        </label>
+      </div>
     </div>
+
+    <section class="section" style="padding-top: var(--space-md)">
+      <div class="container">
+        <div class="spread">
+          <p class="muted small" id="result-count">Loading…</p>
+          <a class="muted small" href="/become-a-seller.html">Sell your work →</a>
+        </div>
+        <ul class="product-grid mt-3" id="results"></ul>
+      </div>
+    </section>
   </main>
 
   <footer id="site-footer"></footer>
