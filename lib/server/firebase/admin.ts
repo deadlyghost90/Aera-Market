@@ -43,19 +43,50 @@ export interface DbRoot {
   ref(path?: string): DbRef;
 }
 
+function describeValue(raw: string): string {
+  const trimmed = raw.trim();
+  const first = trimmed[0] ?? '';
+  const kind =
+    first === '{'
+      ? 'raw-json'
+      : first === '"'
+        ? 'quoted-string'
+        : /^[A-Za-z0-9+/=\s]+$/.test(trimmed)
+          ? 'base64-ish'
+          : 'other';
+
+  let decodedFirst = 'n/a';
+  try {
+    decodedFirst = JSON.stringify(Buffer.from(trimmed, 'base64').toString('utf8').trim().slice(0, 1));
+  } catch {
+    decodedFirst = 'decode-failed';
+  }
+
+  return [
+    `length=${raw.length}`,
+    `kind=${kind}`,
+    `hasKeyField=${trimmed.includes('"private_key"') || trimmed.includes('"client_email"')}`,
+    `newlines=${(raw.match(/\n/g) ?? []).length}`,
+    `decodedFirst=${decodedFirst}`
+  ].join(', ');
+}
+
 function parseServiceAccount(raw: string): {
   project_id: string;
   client_email: string;
   private_key: string;
 } {
-  const trimmed = raw.trim();
+  const trimmed = raw.trim().replace(/^"|"$/g, '');
 
   // Accept the raw JSON as well as base64: pasting the key file contents
   // directly is the most common mistake, and failing here produces a confusing
   // "Unexpected token" error at request time.
   const candidates: string[] = [];
   if (trimmed.startsWith('{')) candidates.push(trimmed);
-  else candidates.push(Buffer.from(trimmed, 'base64').toString('utf8'));
+  else {
+    candidates.push(Buffer.from(trimmed.replace(/\s+/g, ''), 'base64').toString('utf8'));
+    candidates.push(trimmed);
+  }
 
   for (const candidate of candidates) {
     try {
@@ -77,7 +108,8 @@ function parseServiceAccount(raw: string): {
   }
 
   throw new Error(
-    'FIREBASE_SERVICE_ACCOUNT_B64 is neither valid base64 nor raw service-account JSON'
+    `FIREBASE_SERVICE_ACCOUNT_B64 is not usable (${describeValue(raw)}). ` +
+      'Paste the base64 of the service-account JSON, or the JSON object itself.'
   );
 }
 
