@@ -43,16 +43,49 @@ export interface DbRoot {
   ref(path?: string): DbRef;
 }
 
+function parseServiceAccount(raw: string): {
+  project_id: string;
+  client_email: string;
+  private_key: string;
+} {
+  const trimmed = raw.trim();
+
+  // Accept the raw JSON as well as base64: pasting the key file contents
+  // directly is the most common mistake, and failing here produces a confusing
+  // "Unexpected token" error at request time.
+  const candidates: string[] = [];
+  if (trimmed.startsWith('{')) candidates.push(trimmed);
+  else candidates.push(Buffer.from(trimmed, 'base64').toString('utf8'));
+
+  for (const candidate of candidates) {
+    try {
+      const parsed = JSON.parse(candidate) as {
+        project_id?: string;
+        client_email?: string;
+        private_key?: string;
+      };
+      if (parsed.project_id && parsed.client_email && parsed.private_key) {
+        return {
+          project_id: parsed.project_id,
+          client_email: parsed.client_email,
+          private_key: parsed.private_key.replace(/\\n/g, '\n')
+        };
+      }
+    } catch {
+      // try the next candidate
+    }
+  }
+
+  throw new Error(
+    'FIREBASE_SERVICE_ACCOUNT_B64 is neither valid base64 nor raw service-account JSON'
+  );
+}
+
 function buildCredential() {
   const config = env();
 
   if (config.FIREBASE_SERVICE_ACCOUNT_B64 && config.FIREBASE_SERVICE_ACCOUNT_B64.length > 0) {
-    const json = Buffer.from(config.FIREBASE_SERVICE_ACCOUNT_B64, 'base64').toString('utf8');
-    const parsed = JSON.parse(json) as {
-      project_id: string;
-      client_email: string;
-      private_key: string;
-    };
+    const parsed = parseServiceAccount(config.FIREBASE_SERVICE_ACCOUNT_B64);
     return cert({
       projectId: parsed.project_id,
       clientEmail: parsed.client_email,
