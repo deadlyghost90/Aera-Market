@@ -7,104 +7,109 @@
   <meta name="description" content="Source code, templates, plugins, Minecraft resources and game assets. Every product is checked against what the author claims before it is listed.">
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/marketing.css">
+  <link rel="stylesheet" href="/css/premium.css">
 </head>
 <body>
   <header id="site-header"></header>
 
   <main>
     <!-- hero -->
-    <section class="section" style="padding-bottom: 0">
+    <section class="hero-atmosphere section" style="padding-bottom: 0">
+      <div class="hero-orb hero-orb--primary"></div>
+      <div class="hero-orb hero-orb--secondary"></div>
+      <div class="hero-orb hero-orb--accent"></div>
       <div class="container">
         <div class="hero-split">
           <div>
-            <span class="hero-eyebrow">Reviewed before it goes live</span>
-            <h1 style="margin-top: 20px">Digital products that <span class="grad">actually ship</span>.</h1>
-            <p class="lead mt-2">
+            <span class="hero-eyebrow eyebrow--glow">Reviewed before it goes live</span>
+            <h1 style="margin-top: 20px; font-size: clamp(42px, 5vw, 72px); letter-spacing: -0.03em">Digital products that <span class="grad">actually ship</span>.</h1>
+            <p class="lead mt-2" style="color: #a0a0a0; max-width: 520px">
               A marketplace for source code, templates, plugins, Minecraft resources and game
               assets. Authors upload real files; our checks compare them with what is claimed.
             </p>
 
-            <form class="hero-search" id="hero-search" role="search">
+            <form class="hero-search hero-search--premium" id="hero-search" role="search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-inline-start:14px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="search" id="hero-search-input" placeholder="Search products, tags, authors" aria-label="Search products">
               <button class="btn btn-primary" type="submit">Search</button>
             </form>
 
             <div class="hero-meta">
-              <span>Every listing human reviewed</span>
-              <span>Private files, signed downloads</span>
-              <span>40% platform commission</span>
+              <span class="dot"></span><span>Every listing human reviewed</span>
+              <span class="dot"></span><span>Private files, signed downloads</span>
+              <span class="dot"></span><span>40% platform commission</span>
             </div>
           </div>
 
-          <div class="hero-stack" id="hero-stack" aria-hidden="true">
-            <div class="stack-card">
-              <div class="thumb"></div>
-              <div class="body"><strong>Loading catalogue…</strong><span>—</span></div>
-            </div>
-          </div>
+          <div class="hero-stack hero-stack--premium" id="hero-stack" aria-hidden="true"></div>
         </div>
       </div>
     </section>
 
     <!-- category marquee -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track" id="category-marquee"></div>
+    <div class="marquee marquee--premium" aria-hidden="true">
+      <div class="marquee-track marquee-track--premium" id="category-marquee"></div>
     </div>
 
     <!-- stats -->
     <section class="section" style="padding-bottom: 0">
       <div class="container">
-        <div class="hero-stats">
-          <div class="hero-stat"><strong id="stat-categories">—</strong><span>Categories open for authors</span></div>
-          <div class="hero-stat"><strong>14</strong><span>Automated checks per submission</span></div>
-          <div class="hero-stat"><strong>100%</strong><span>Products reviewed by a human</span></div>
-          <div class="hero-stat"><strong>40%</strong><span>Platform commission, stated up front</span></div>
+        <div class="hero-stats hero-stats--premium reveal">
+          <div class="hero-stat hero-stat--premium"><strong id="stat-categories">—</strong><span>Categories open for authors</span></div>
+          <div class="hero-stat hero-stat--premium"><strong>14</strong><span>Automated checks per submission</span></div>
+          <div class="hero-stat hero-stat--premium"><strong>100%</strong><span>Products reviewed by a human</span></div>
+          <div class="hero-stat hero-stat--premium"><strong>40%</strong><span>Platform commission, stated up front</span></div>
         </div>
       </div>
     </section>
 
+    <div class="divider-glow container"></div>
+
     <!-- categories -->
-    <section class="section" id="categories">
+    <section class="section reveal" id="categories">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head section-head--premium">
           <div>
-            <span class="eyebrow">Browse</span>
+            <span class="eyebrow eyebrow--glow">Browse</span>
             <h2>Find the right category</h2>
-            <p>Each category defines which product types and file types are accepted, so the catalogue stays consistent.</p>
+            <p style="color:#888; margin-top:8px">Each category defines which product types and file types are accepted, so the catalogue stays consistent.</p>
           </div>
-          <a href="/explore.html">All products →</a>
+          <a href="/explore.html">All products</a>
         </div>
-        <div class="chips" id="category-chips"></div>
+        <div class="chips chips--premium" id="category-chips"></div>
       </div>
     </section>
 
     <!-- featured -->
-    <section class="section" style="padding-top: 0">
+    <section class="section reveal" style="padding-top: 0">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head section-head--premium">
           <div>
-            <span class="eyebrow">Fresh</span>
+            <span class="eyebrow eyebrow--glow">Fresh</span>
             <h2>Recently approved</h2>
-            <p>Only products that passed the automated checks and a human review appear here.</p>
+            <p style="color:#888; margin-top:8px">Only products that passed the automated checks and a human review appear here.</p>
           </div>
-          <a href="/explore.html">See everything →</a>
+          <a href="/explore.html">See everything</a>
         </div>
         <ul class="product-grid" id="featured-grid"></ul>
       </div>
     </section>
 
+    <div class="divider-glow container"></div>
+
     <!-- why -->
-    <section class="section" style="padding-top: 0">
+    <section class="section reveal" style="padding-top: 0">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head section-head--premium">
           <div>
-            <span class="eyebrow">Why Aera</span>
+            <span class="eyebrow eyebrow--glow">Why Aera</span>
             <h2>Built for buyers who read the fine print</h2>
           </div>
         </div>
 
-        <div class="bento">
-          <article class="bento-tile span-6">
+        <div class="bento bento--premium">
+          <article class="bento-tile span-6 bento-tile--premium">
+            <div class="bento-img"><div class="bento-img-overlay"></div></div>
             <span class="kicker">Verification</span>
             <h3>Claims checked against files</h3>
             <p>
@@ -114,21 +119,24 @@
             <span class="figure">14 checks</span>
           </article>
 
-          <article class="bento-tile span-3">
+          <article class="bento-tile span-3 bento-tile--premium">
+            <div class="bento-img"><div class="bento-img-overlay"></div></div>
             <span class="kicker">Review</span>
             <h3>Human decision</h3>
             <p>Approve, request changes or reject with a reason the author can act on.</p>
             <span class="figure">1:1</span>
           </article>
 
-          <article class="bento-tile span-3">
+          <article class="bento-tile span-3 bento-tile--premium">
+            <div class="bento-img"><div class="bento-img-overlay"></div></div>
             <span class="kicker">Delivery</span>
             <h3>Private bucket</h3>
             <p>Files never leave storage without a proven purchase and a signed, expiring link.</p>
             <span class="figure">120s</span>
           </article>
 
-          <article class="bento-tile span-8">
+          <article class="bento-tile span-8 bento-tile--premium">
+            <div class="bento-img"><div class="bento-img-overlay"></div></div>
             <span class="kicker">Money</span>
             <h3>One ledger, visible to both sides</h3>
             <p>
@@ -138,7 +146,8 @@
             <span class="figure">40 / 60</span>
           </article>
 
-          <article class="bento-tile span-4">
+          <article class="bento-tile span-4 bento-tile--premium">
+            <div class="bento-img"><div class="bento-img-overlay"></div></div>
             <span class="kicker">Accounts</span>
             <h3>Anyone can become an author</h3>
             <p>Apply, get approved, publish. Buyers keep buying with the same account.</p>
@@ -149,27 +158,27 @@
     </section>
 
     <!-- how it works -->
-    <section class="section" style="padding-top: 0" id="how">
+    <section class="section reveal" style="padding-top: 0" id="how">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head section-head--premium">
           <div>
-            <span class="eyebrow">For authors</span>
+            <span class="eyebrow eyebrow--glow">For authors</span>
             <h2>From upload to listing in three steps</h2>
           </div>
         </div>
 
-        <div class="steps">
-          <div class="step">
+        <div class="steps steps--premium">
+          <div class="step step--premium">
             <span class="num">01</span>
             <h3>Draft the product</h3>
             <p>Title, summary, category, licence and price. The category decides the accepted file types and the minimum price.</p>
           </div>
-          <div class="step">
+          <div class="step step--premium">
             <span class="num">02</span>
             <h3>Upload the real files</h3>
             <p>Deliverable and preview go straight to private storage. Size and content type are signed into the upload, then verified.</p>
           </div>
-          <div class="step">
+          <div class="step step--premium">
             <span class="num">03</span>
             <h3>Pass the review</h3>
             <p>Automated checks run first. A reviewer then approves, requests changes, or rejects with a specific reason.</p>
@@ -178,10 +187,12 @@
       </div>
     </section>
 
+    <div class="divider-glow container"></div>
+
     <!-- cta -->
     <section class="section" style="padding-top: 0">
       <div class="container">
-        <div class="cta-band">
+        <div class="cta-band cta-band--premium">
           <div>
             <h2>Sell what you build.</h2>
             <p>Authors keep the majority of every sale. Apply once, publish as often as you like.</p>
@@ -193,6 +204,9 @@
   </main>
 
   <footer id="site-footer"></footer>
+
+  <!-- Scroll reveal + premium interactions -->
+  <script src="/js/utils/reveal.js" defer></script>
   <script type="module" src="/js/pages/home.js"></script>
 </body>
 </html>

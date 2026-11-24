@@ -74,7 +74,7 @@ if (!id) {
       const item = document.createElement('li');
       item.className = 'check-item';
       const dot = document.createElement('span');
-      dot.className = 'check-dot ok';
+      dot.className = 'check-dot ok check-dot--premium';
       const text = document.createElement('span');
       text.textContent = `${file.name} · ${(file.sizeBytes / 1024 / 1024).toFixed(2)} MB`;
       item.append(dot, text);
@@ -122,11 +122,14 @@ if (!id) {
     const others = (related || []).filter((entry) => entry.id !== product.id).slice(0, 4);
     if (others.length === 0) {
       const empty = document.createElement('li');
-      empty.className = 'empty';
-      empty.textContent = 'Nothing else in this category yet.';
+      empty.className = 'empty--premium';
+      empty.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div>Nothing else in this category yet.</div>`;
+      list.style.gridColumn = '1 / -1';
       list.append(empty);
     } else {
-      for (const entry of others) list.append(productCard(entry));
+      for (const entry of others) {
+        list.append(productCard(entry, { premium: true }));
+      }
     }
   } catch (error) {
     fail(error.message || 'This product could not be loaded.');

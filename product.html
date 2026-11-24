@@ -6,6 +6,7 @@
   <title>Product — Aera Market</title>
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/marketing.css">
+  <link rel="stylesheet" href="/css/premium.css">
 </head>
 <body>
   <header id="site-header"></header>
@@ -16,35 +17,35 @@
 
       <div class="detail-grid mt-3">
         <div class="stack">
-          <div class="gallery">
-            <div class="gallery-main" id="preview">Loading…</div>
+          <div class="gallery glass-bright" style="border-radius:var(--rounded-lg)">
+            <div class="gallery-main gallery-main--premium" id="preview">Loading…</div>
             <div class="gallery-thumbs" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>
           </div>
 
           <div class="mt-3">
-            <div class="tabs" role="tablist" id="tabs">
-              <button class="tab" role="tab" data-tab="overview" aria-selected="true" type="button">Overview</button>
-              <button class="tab" role="tab" data-tab="included" aria-selected="false" type="button">What's included</button>
-              <button class="tab" role="tab" data-tab="licence" aria-selected="false" type="button">Licence</button>
+            <div class="tabs tabs--premium" role="tablist" id="tabs">
+              <button class="tab tab--premium" role="tab" data-tab="overview" aria-selected="true" type="button">Overview</button>
+              <button class="tab tab--premium" role="tab" data-tab="included" aria-selected="false" type="button">What's included</button>
+              <button class="tab tab--premium" role="tab" data-tab="licence" aria-selected="false" type="button">Licence</button>
             </div>
 
-            <div class="tab-panel" data-panel="overview" data-active="true">
+            <div class="tab-panel glass" data-panel="overview" data-active="true" style="border-radius:var(--rounded-md); padding:24px">
               <h3>About this product</h3>
               <p class="mt-2" id="description" style="white-space: pre-wrap; color: #bdbdbd"></p>
             </div>
 
             <div class="tab-panel" data-panel="included">
               <h3>Deliverables</h3>
-              <ul class="check-list mt-2" id="files"></ul>
+              <ul class="check-list check-list--premium mt-2" id="files"></ul>
               <p class="muted small mt-2" id="files-note"></p>
             </div>
 
             <div class="tab-panel" data-panel="licence">
               <h3>Licence</h3>
               <p class="mt-2" id="licence-text" style="color: #bdbdbd"></p>
-              <ul class="requirements mt-3">
+              <ul class="requirements requirements--premium mt-3">
                 <li>Use the files in your own projects, including commercial work.</li>
                 <li>Do not resell, redistribute or republish the files as your own.</li>
                 <li>Full refunds remove access to the files.</li>
@@ -53,59 +54,60 @@
           </div>
         </div>
 
-        <aside class="stack">
-          <div class="card">
+        <aside class="stack stack--premium">
+          <div class="card card--premium glass-bright" style="border-radius:var(--rounded-lg)">
             <span class="badge badge-accent" id="kind"></span>
-            <h1 class="mt-2" id="title" style="font-size: clamp(28px, 3vw, 36px); line-height: 1.15">Product</h1>
-            <p class="muted small mt-2" id="summary"></p>
-            <p class="product-price mt-3" id="price"></p>
-            <button class="btn btn-primary btn-block mt-2" id="buy" type="button">Buy now</button>
+            <h1 class="mt-2" id="title" style="font-size: clamp(28px, 3vw, 36px); line-height: 1.15; letter-spacing:-0.02em">Product</h1>
+            <p class="muted small mt-2" id="summary" style="color:#888"></p>
+            <p class="product-price mt-3" id="price" style="font-size:32px"></p>
+            <button class="btn btn-primary btn-block mt-2 btn--glow" id="buy" type="button">Buy now</button>
             <p class="muted small mt-2" id="buy-note">
               Secure checkout via Safepay. Downloads are signed and expire after two minutes.
             </p>
-            <div class="divider"></div>
-            <dl class="summary-list">
+            <div class="divider divider-glow" style="margin-block:20px"></div>
+            <dl class="summary-list summary-list--premium">
               <dt>Type</dt><dd id="kind-meta"></dd>
               <dt>Licence</dt><dd id="licence"></dd>
               <dt>Tags</dt><dd id="tags"></dd>
             </dl>
           </div>
 
-          <div class="card">
-            <div class="seller-card">
-              <div class="seller-avatar" id="seller-initial">A</div>
+          <div class="card card--premium glass" style="border-radius:var(--rounded-lg); margin-top:16px">
+            <div class="seller-card seller-card--premium">
+              <div class="seller-avatar seller-avatar--premium" id="seller-initial">A</div>
               <div>
-                <div class="name" id="author">Author</div>
+                <div class="name name--premium" id="author">Author</div>
                 <div class="meta" id="seller-meta">Reviewed author</div>
               </div>
             </div>
           </div>
 
-          <div class="card">
+          <div class="card card--premium glass" style="border-radius:var(--rounded-lg); margin-top:16px">
             <h3>Buyer protection</h3>
-            <ul class="check-list mt-2">
-              <li class="check-item"><span class="check-dot ok"></span><span>Files verified against the author's claim.</span></li>
-              <li class="check-item"><span class="check-dot ok"></span><span>Human reviewed before listing.</span></li>
-              <li class="check-item"><span class="check-dot ok"></span><span>Refund request available from your purchases.</span></li>
+            <ul class="check-list check-list--premium mt-2">
+              <li class="check-item"><span class="check-dot ok check-dot--premium"></span><span>Files verified against the author's claim.</span></li>
+              <li class="check-item"><span class="check-dot ok check-dot--premium"></span><span>Human reviewed before listing.</span></li>
+              <li class="check-item"><span class="check-dot ok check-dot--premium"></span><span>Refund request available from your purchases.</span></li>
             </ul>
           </div>
         </aside>
       </div>
 
-      <section class="section" style="padding-bottom: 0">
-        <div class="section-head">
+      <section class="section reveal" style="padding-bottom: 0; margin-top: 48px">
+        <div class="section-head section-head--premium">
           <div>
-            <span class="eyebrow">More like this</span>
+            <span class="eyebrow eyebrow--glow">More like this</span>
             <h2>From the same catalogue</h2>
           </div>
           <a href="/explore.html">Explore →</a>
         </div>
-        <ul class="product-grid" id="related"></ul>
+        <ul class="product-grid product-grid--premium" id="related"></ul>
       </section>
     </div>
   </main>
 
   <footer id="site-footer"></footer>
+  <script src="/js/utils/reveal.js" defer></script>
   <script type="module" src="/js/pages/product.js"></script>
 </body>
 </html>

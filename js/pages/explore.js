@@ -7,14 +7,14 @@ await mountShell('/explore.html');
 const grid = document.getElementById('results');
 const chips = document.getElementById('filter-chips');
 const count = document.getElementById('result-count');
-const searchForm = document.getElementById('search-form');
-const searchInput = document.getElementById('search-input');
-const sortSelect = document.getElementById('sort-select');
+const searchForm = document.getElementById('filter-form');
+const searchInput = document.getElementById('filter-q');
+const sortSelect = document.getElementById('filter-sort');
 
 const params = new URLSearchParams(window.location.search);
 let categoryId = params.get('category') ?? '';
 let search = params.get('q') ?? '';
-let sort = params.get('sort') ?? 'newest';
+let sort = params.get('sort') ?? 'created-desc';
 searchInput.value = search;
 sortSelect.value = sort;
 
@@ -25,7 +25,7 @@ function renderChips() {
 
   const all = document.createElement('button');
   all.type = 'button';
-  all.className = 'chip';
+  all.className = 'chip chip--premium';
   all.textContent = 'All categories';
   all.setAttribute('aria-pressed', String(categoryId === ''));
   all.addEventListener('click', () => {
@@ -37,7 +37,7 @@ function renderChips() {
   for (const category of categories) {
     const chip = document.createElement('button');
     chip.type = 'button';
-    chip.className = 'chip';
+    chip.className = 'chip chip--premium';
     chip.textContent = category.name;
     chip.setAttribute('aria-pressed', String(categoryId === category.id));
     chip.addEventListener('click', () => {
@@ -53,13 +53,13 @@ function applySort(products) {
   if (sort === 'price-asc') list.sort((a, b) => a.priceMinor - b.priceMinor);
   else if (sort === 'price-desc') list.sort((a, b) => b.priceMinor - a.priceMinor);
   else if (sort === 'title') list.sort((a, b) => a.title.localeCompare(b.title));
-  else list.sort((a, b) => (b.approvedAt ?? 0) - (a.approvedAt ?? 0));
+  else list.sort((a, b) => (b.approvedAt?.seconds ?? 0) - (a.approvedAt?.seconds ?? 0));
   return list;
 }
 
 async function load() {
   renderChips();
-  showSkeletons(grid, 6);
+  showSkeletons(grid, 8);
 
   const query = new URLSearchParams();
   if (categoryId) query.set('category', categoryId);
@@ -68,13 +68,16 @@ async function load() {
 
   const url = new URL(window.location.href);
   url.search = query.toString();
-  if (sort !== 'newest') url.searchParams.set('sort', sort);
+  if (sort !== 'created-desc') url.searchParams.set('sort', sort);
   history.replaceState(null, '', url.toString());
 
   try {
     const products = await api(`/api/products?${query.toString()}`);
     const ordered = applySort(products || []);
-    renderGrid(grid, ordered, 'Nothing matches those filters yet.');
+    renderGrid(grid, ordered, 'Nothing matches those filters yet.', {
+      premium: true,
+      showBadge: true
+    });
     count.textContent = `${ordered.length} product(s)`;
   } catch (error) {
     renderGrid(grid, [], error.message || 'Could not load products.');
@@ -82,13 +85,13 @@ async function load() {
   }
 }
 
-searchForm.addEventListener('submit', (event) => {
+searchForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   search = searchInput.value.trim();
   void load();
 });
 
-sortSelect.addEventListener('change', () => {
+sortSelect?.addEventListener('change', () => {
   sort = sortSelect.value;
   void load();
 });

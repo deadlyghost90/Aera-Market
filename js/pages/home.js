@@ -25,13 +25,16 @@ try {
     api('/api/categories')
   ]);
 
-  renderGrid(grid, products, 'No products are live yet. The first approved item will appear here.');
+  renderGrid(grid, products, 'No products are live yet. The first approved item will appear here.', {
+    premium: true,
+    showBadge: true
+  });
 
   document.getElementById('stat-categories').textContent = String(categories.length);
 
   for (const category of categories) {
     const chip = document.createElement('a');
-    chip.className = 'chip';
+    chip.className = 'chip chip--premium';
     chip.href = `/explore.html?category=${encodeURIComponent(category.id)}`;
     chip.textContent = category.name;
     chips.append(chip);
@@ -42,24 +45,27 @@ try {
   for (const pass of [0, 1]) {
     for (const category of items) {
       const item = document.createElement('span');
-      item.className = 'marquee-item';
+      item.className = 'marquee-item marquee-item--premium';
       item.textContent = category.name;
       marquee.append(item);
     }
     if (pass === 0 && items.length > 0) {
       const gap = document.createElement('span');
-      gap.className = 'marquee-item';
-      gap.textContent = pass === 0 ? '·' : '';
+      gap.className = 'marquee-item marquee-item--premium';
+      gap.textContent = '·';
       marquee.append(gap);
     }
   }
 
-  // Hero stack: the three newest approved products.
+  // Hero stack: the three newest approved products with glass-card style.
   if (products.length > 0) {
     stack.replaceChildren();
-    for (const product of products.slice(0, 3)) {
+    for (let i = 0; i < Math.min(3, products.length); i++) {
+      const product = products[i];
       const card = document.createElement('div');
-      card.className = 'stack-card';
+      card.className = 'stack-card stack-card--premium';
+      card.style.marginBottom = i === 0 ? 16 : i === 1 ? 10 : 0;
+      card.style.marginLeft = i === 0 ? 0 : i === 1 ? -12 : -24;
 
       const thumb = document.createElement('div');
       thumb.className = 'thumb';
@@ -67,10 +73,19 @@ try {
         const img = document.createElement('img');
         img.src = product.previewUrl;
         img.alt = '';
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'cover';
+        img.loading = 'lazy';
         thumb.append(img);
+      } else {
+        thumb.style.background = `linear-gradient(135deg, rgba(135,230,75,0.15), var(--neutral-80))`;
+        thumb.textContent = label(product.kind);
+        thumb.style.display = 'flex';
+        thumb.style.alignItems = 'center';
+        thumb.style.justifyContent = 'center';
+        thumb.style.color = '#666';
+        thumb.style.fontSize = '13px';
+        thumb.style.fontWeight = '600';
+        thumb.style.textTransform = 'uppercase';
+        thumb.style.letterSpacing = '0.1em';
       }
 
       const body = document.createElement('div');
@@ -87,9 +102,10 @@ try {
   } else {
     stack.replaceChildren();
     const card = document.createElement('div');
-    card.className = 'stack-card';
+    card.className = 'stack-card stack-card--premium';
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
+    thumb.style.background = `linear-gradient(135deg, rgba(135,230,75,0.1), var(--neutral-80))`;
     const body = document.createElement('div');
     body.className = 'body';
     const name = document.createElement('strong');

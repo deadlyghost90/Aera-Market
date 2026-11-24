@@ -918,3 +918,22 @@ label.check { display: flex; gap: 8px; align-items: center; color: var(--seconda
   html { scroll-behavior: auto; }
   .auth-page::before, .auth-page::after { animation: none; }
 }
+
+/* ---- Premium additions ---- */
+.btn--glow { box-shadow: 0 2px 16px var(--primary-glow); }
+.spread--premium { align-items: flex-end; }
+.stat-grid--premium { gap: 16px; }
+.form--premium label.field input,
+.form--premium label.field textarea,
+.form--premium label.field select { background: var(--neutral-80); border-color: var(--neutral-70); color: var(--secondary); }
+.faq--premium details { border-left: 3px solid transparent; padding-left: 14px; transition: border-color 0.2s ease; }
+.faq--premium details[open] { border-left-color: var(--primary); }
+.check-list--premium .check-dot.ok { background: var(--primary); box-shadow: 0 0 6px var(--primary-glow-sm); }
+.requirements--premium li::before { width: 8px; height: 8px; box-shadow: 0 0 6px var(--primary-glow-sm); }
+.cards-pd { display: grid; gap: 12px; }
+.summary-list--premium dt { color: #999; font-weight: 500; font-size: 13px; }
+.summary-list--premium dd { margin: 0 0 8px 0; color: var(--secondary); font-weight: 600; }
+.gallery-main--premium { min-height: 320px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.gallery-main--premium img { max-width: 100%; max-height: 480px; object-fit: contain; }
+.seller-card--premium { gap: 14px; }
+.name--premium { font-size: 15px; font-weight: 700; color: var(--secondary); }

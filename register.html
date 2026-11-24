@@ -6,13 +6,14 @@
   <title>Create account — Aera Market</title>
   <meta name="description" content="Create your Aera Market account to buy products or become an author.">
   <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/premium.css">
 </head>
-<body class="auth-page">
+<body class="auth-page auth-page--premium">
   <main>
-    <div class="auth-card">
+    <div class="auth-card glass-bright fade-up">
       <!-- Logo -->
-      <div class="auth-logo fade-up">
-        <span class="brand-mark"></span>
+      <div class="auth-logo auth-logo--premium fade-up">
+        <span class="brand-mark brand-mark--pulse"></span>
         <span>Aera Market</span>
       </div>
 
@@ -21,7 +22,7 @@
       <p class="auth-subtitle fade-up">Buy products, or apply as an author and start selling.</p>
 
       <!-- Social auth row -->
-      <div class="social-row fade-up" id="social-row">
+      <div class="social-row social-row--premium fade-up" id="social-row">
         <button class="social-btn google" type="button" id="btn-google" title="Sign up with Google">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -46,7 +47,7 @@
       <div class="auth-divider fade-up">or sign up with email</div>
 
       <!-- Registration form -->
-      <form id="register-form" class="form fade-up" novalidate>
+      <form id="register-form" class="form form--premium fade-up" novalidate>
         <div class="auth-field">
           <input type="text" name="displayName" autocomplete="name" required placeholder="Display name" minlength="2" maxlength="60">
           <label>Display name</label>
@@ -71,7 +72,7 @@
             </button>
           </div>
           <!-- Strength meter -->
-          <div class="strength-meter" id="strength-meter">
+          <div class="strength-meter strength-meter--premium" id="strength-meter">
             <div class="strength-bar"></div>
             <div class="strength-bar"></div>
             <div class="strength-bar"></div>
@@ -79,7 +80,7 @@
           </div>
           <span class="strength-label" id="strength-label"></span>
         </div>
-        <button class="auth-submit" type="submit" id="register-btn">
+        <button class="auth-submit auth-submit--premium" type="submit" id="register-btn">
           <span class="spinner"></span>
           <span class="btn-text">Create account</span>
         </button>
